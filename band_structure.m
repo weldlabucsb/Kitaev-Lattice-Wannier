@@ -3,7 +3,7 @@
 
 lattice_wavelength = 1.064e-6;%meters
 num_band = 5;
-lattice_depth = 2; %Er
+lattice_depth = 200; %Er
 v_0 = lattice_depth;
 max_m = 50;
 m_len = max_m*2+1
@@ -11,29 +11,34 @@ m_len = max_m*2+1
 %here q is the quasimomentum, but perhaps I should get into the habit of
 %making this k since I believe that this is the more standard notations
 qs = linspace(-1,1,100);
-
+%initialize the matrix
 h = zeros(max_m*2+1,max_m*2+1,length(qs));
 for ii = 1:m_len
     for jj = 1:m_len
         if ii == jj
-            h(ii,jj,:) = (v_0)./2 + (qs+2*(max_m+1-ii)).^2;%here it is actually q/(lattice constant), so brilluoin zone is -1 to 1
+            %these are the diagonal terms
+            h(ii,jj,:) = (v_0)./2 + (qs+2*(max_m+1-ii)).^2;%here it is actually q/(light wavevector), so brilluoin zone is -1 to 1
         end
         if ii == jj+1 || ii == jj-1
+            %the off-diagonal 'coupling' terms. This makes the system
+            %non-trivial
             h(ii,jj,:) = (v_0)./4;
         end
     end
 end
-
+%initialize the array to store the eigenvalues
 eigs = zeros(m_len,length(qs));
 for i = 1:length(qs)
+    %find the actual band sturucture by compting the energies.
     eigs(:,i) = eig(h(:,:,i));
 end
 figure;
 hold all;
 for i = 1:num_band
+    %plot the energy vs quasimomentum
     plot(qs,eigs(i,:));
 end
-xlabel('quasimomentum/lattice Vector')
+xlabel('quasimomentum(q), [k_{l}]')
 ylabel('energy in Recoils')
 
 %now we want to be able to plot the bloch functions... We need the
@@ -44,12 +49,14 @@ ylabel('energy in Recoils')
 %zero for now
 q_index = 50;
 q = qs(q_index)
+%to find the bloch functions we actually need the eigenvectors, not just
+%the eigenvalues
 [weights,eigs] = eig(h(:,:,q_index));
 m_vec = -max_m:max_m;
 x = linspace(0,20,200);
 u = zeros(1,length(x));
 for ii = 1:length(x)
-    u(ii) = real(bloch_func(weights(:,1),m_vec,x(ii)));
+    u(ii) = abs(bloch_func(weights(:,1),m_vec,x(ii)));
 end
 figure;
 plot(x,u);
