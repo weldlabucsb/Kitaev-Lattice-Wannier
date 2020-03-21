@@ -13,10 +13,11 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
     close all
 
     %% Initialize Position Space Mesh and Time Mesh
+    %units of lamba, the lattice light wavelength
     xMin = 0;
-    xMax = 1.5;
+    xMax = 1;
     yMin = 0;
-    yMax = 1.5;
+    yMax = 1;
     xStep = 0.01;
     yStep = 0.01;
     
@@ -83,7 +84,6 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
         Ey(:,:,qq) = E(:,:,qq)*(cos(th(qq))*sin(pol(qq)));
         Ez(:,:,qq) = E(:,:,qq)*(cos(pol(qq)));
     end
-
     % Calculating the total x,y,z components of electric field by summing the
     % cartesian vector components of the complex electric field
     % representation
@@ -112,10 +112,12 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
     % Figure as a contour plot with N levels
     N=10;
     f1 = figure;
-    figHeight = 700;
-    set(f1,'Position',[20,950-figHeight,800,figHeight])
+%     figHeight = 700;
+%     set(f1,'Position',[20,950-figHeight,800,figHeight])
     set(f1,'color','w')
     contourf(X,Y,(avgI),N)
+    xlabel('X Position, [$\lambda$]','interpreter','latex')
+    ylabel('Y Position, [$\lambda$]','interpreter','latex')
     colorbar
     colormap(parula)
     set(f1,'Units','Pixels');
@@ -131,9 +133,11 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
 
     % Figure as a 2d color map
     f2 = figure;
-    set(f2,'Position',[850,950-figHeight,800,figHeight])
+%     set(f2,'Position',[850,950-figHeight,800,figHeight])
     set(f2,'color','w')
     s = surf(X,Y,(avgI));
+    xlabel('X Position, [$\lambda$]','interpreter','latex')
+    ylabel('Y Position, [$\lambda$]','interpreter','latex')
     view(2)
     s.EdgeColor = 'none';
     colorbar
@@ -171,7 +175,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
     figWidth = figHeight2*dim1/dim2 + 100*dim1;  % Extra 100*dim1 to account for color bar width
     
     f3 = figure();
-    set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
+%     set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
     set(f3,'color','w')
     
     % Initializing parameters for the cosine terms
@@ -194,7 +198,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
             % unless you stop at (pp<=numWaves/2)  (this is the "(~(step==numWaves/2))||(pp<=numWaves/2)")
             
             qq = mod(pp+step-1,numWaves)+1;  % Index of the second wave for each pair
-
+            
             
             % Calculate parameters of the cosine term of the potential
             waveAmplitudes(jj) = EzAmp(pp)*EzAmp(qq) + Epara(pp)*Epara(qq)*cos(th(pp)-th(qq));  
@@ -213,6 +217,8 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
             subplots{jj} = subplot(dim2,dim1,jj);
 %             con = contourf(X,Y,(totalFromCompSum),N);
             contourf(X,Y,(compWaveMatrix+abs(waveAmplitudes(jj))),N);
+            xlabel('X Position, [$\lambda$]','interpreter','latex')
+            ylabel('Y Position, [$\lambda$]','interpreter','latex')
             view(2)
             title(subPlotLabels{jj})
             colorbar
@@ -245,9 +251,11 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
     
     % Making a plot of the whole potential from the sum of component waves
     f4 = figure;
-    set(f4,'Position',[200,950-figHeight-200,800,figHeight])
+%     set(f4,'Position',[200,950-figHeight-200,800,figHeight])
     set(f4,'color','w')
     contourf(X,Y,(totalFromCompSum),N);
+    xlabel('X Position, [$\lambda$]','interpreter','latex')
+    ylabel('Y Position, [$\lambda$]','interpreter','latex')
     view(2)
 %     s.EdgeColor = 'none';
     colorbar

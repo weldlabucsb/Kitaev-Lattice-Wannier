@@ -112,8 +112,8 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
     % Figure as a contour plot with N levels
     N=10;
     f1 = figure;
-    figHeight = 700;
-    set(f1,'Position',[20,950-figHeight,800,figHeight])
+%     figHeight = 700;
+%     set(f1,'Position',[20,950-figHeight,800,figHeight])
     set(f1,'color','w')
     contourf(X,Y,(avgI),N)
     colorbar
@@ -131,7 +131,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
 
     % Figure as a 2d color map
     f2 = figure;
-    set(f2,'Position',[850,950-figHeight,800,figHeight])
+%     set(f2,'Position',[850,950-figHeight,800,figHeight])
     set(f2,'color','w')
     s = surf(X,Y,(avgI));
     view(2)
@@ -171,7 +171,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
     figWidth = figHeight2*dim1/dim2 + 100*dim1;  % Extra 100*dim1 to account for color bar width
     
     f3 = figure();
-    set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
+%     set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
     set(f3,'color','w')
     
     % Initializing parameters for the cosine terms
@@ -245,7 +245,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
     
     % Making a plot of the whole potential from the sum of component waves
     f4 = figure;
-    set(f4,'Position',[200,950-figHeight-200,800,figHeight])
+%     set(f4,'Position',[200,950-figHeight-200,800,figHeight])
     set(f4,'color','w')
     contourf(X,Y,(totalFromCompSum),N);
     view(2)
