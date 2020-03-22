@@ -1,4 +1,4 @@
-function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWithComponents()
+function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots)
     %% THIS FUNCTION IS USED TO MODEL A GENERAL 2D OPTICAL POTENTIAL
         % Presently it is coded for multipled interfering laser beams (plane waves)
         % Enables setting of wave amplitude, wave phase, wave propagation
@@ -34,25 +34,22 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWith
 
     
     % Electric field amplitudes
-    A = [1,1,0.6,0.5];
+%     A = [1,1,0.6,0.5];
 
     
     % Light beam phases
-    ph_deg = [0, 0, 90, -70];
+%     ph_deg = [0, 0, 90, -70];
     ph = (pi/180)*ph_deg;
 
     
     %Planewave propagation direction angles (0 = positive x direction, 90deg = positive y direction)
-    th_deg = [0,...
-        90,...
-        180,...
-        270];
+%     th_deg = [0,90,180,270];
 
     th = (pi/180)*th_deg;
 
 
     % Polarization angles of the beams (0 = out of plane;  90deg = in plane)
-    pol_deg = [0,0,0,0];
+%     pol_deg = [0,0,0,0];
     pol = (pi/180)*pol_deg;
 
 
@@ -108,49 +105,49 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWith
     beamPolarizationAngles = ['Beam Polarization Angles = [ ', num2str(pol_deg) , ' ] (degs)'];
     beamPhasesAngles = ['Beam Phases = [ ', num2str(ph_deg) , ' ] (deg)'];
 
+    if (plots)
+        % Figure as a contour plot with N levels
+        N=10;
+        f1 = figure;
+    %     figHeight = 700;
+    %     set(f1,'Position',[20,950-figHeight,800,figHeight])
+        set(f1,'color','w')
+        contourf(X,Y,(avgI),N)
+        xlabel('X Position, [$\lambda$]','interpreter','latex')
+        ylabel('Y Position, [$\lambda$]','interpreter','latex')
+        colorbar
+        colormap(parula)
+        set(f1,'Units','Pixels');
 
-    % Figure as a contour plot with N levels
-    N=10;
-    f1 = figure;
-%     figHeight = 700;
-%     set(f1,'Position',[20,950-figHeight,800,figHeight])
-    set(f1,'color','w')
-    contourf(X,Y,(avgI),N)
-    xlabel('X Position, [$\lambda$]','interpreter','latex')
-    ylabel('Y Position, [$\lambda$]','interpreter','latex')
-    colorbar
-    colormap(parula)
-    set(f1,'Units','Pixels');
-
-    % Adding parameters to the top of the figure
-    uicontrol(f1,'style','text','Units','Pixels',...
-        'Position',[10 f1.Position(4)-20 800 15],'String',[EAmps,';  ',beamPolarizationAngles,';  '], ...
-        'HorizontalAlignment', 'Left','Background','w'); 
-    uicontrol(f1,'style','text','Units','Pixels',...
-        'Position',[10 f1.Position(4)-40 800 15],'String',[beamPhasesAngles,';  ',beamDirections], ...
-        'HorizontalAlignment', 'Left','Background','w'); 
+        % Adding parameters to the top of the figure
+        uicontrol(f1,'style','text','Units','Pixels',...
+            'Position',[10 f1.Position(4)-20 800 15],'String',[EAmps,';  ',beamPolarizationAngles,';  '], ...
+            'HorizontalAlignment', 'Left','Background','w'); 
+        uicontrol(f1,'style','text','Units','Pixels',...
+            'Position',[10 f1.Position(4)-40 800 15],'String',[beamPhasesAngles,';  ',beamDirections], ...
+            'HorizontalAlignment', 'Left','Background','w'); 
 
 
-    % Figure as a 2d color map
-    f2 = figure;
-%     set(f2,'Position',[850,950-figHeight,800,figHeight])
-    set(f2,'color','w')
-    s = surf(X,Y,(avgI));
-    xlabel('X Position, [$\lambda$]','interpreter','latex')
-    ylabel('Y Position, [$\lambda$]','interpreter','latex')
-    view(2)
-    s.EdgeColor = 'none';
-    colorbar
-    colormap(parula)
+        % Figure as a 2d color map
+        f2 = figure;
+    %     set(f2,'Position',[850,950-figHeight,800,figHeight])
+        set(f2,'color','w')
+        s = surf(X,Y,(avgI));
+        xlabel('X Position, [$\lambda$]','interpreter','latex')
+        ylabel('Y Position, [$\lambda$]','interpreter','latex')
+        view(2)
+        s.EdgeColor = 'none';
+        colorbar
+        colormap(parula)
 
-    % Adding parameters to the top of the figure
-    uicontrol(f2,'style','text','Units','Pixels',...
-        'Position',[10 f2.Position(4)-20 800 15],'String',[EAmps,';  ',beamPolarizationAngles,';  '], ...
-        'HorizontalAlignment', 'Left','Background','w'); 
-    uicontrol(f2,'style','text','Units','Pixels',...
-        'Position',[10 f2.Position(4)-40 800 15],'String',[beamPhasesAngles,';  ',beamDirections], ...
-        'HorizontalAlignment', 'Left','Background','w'); 
-
+        % Adding parameters to the top of the figure
+        uicontrol(f2,'style','text','Units','Pixels',...
+            'Position',[10 f2.Position(4)-20 800 15],'String',[EAmps,';  ',beamPolarizationAngles,';  '], ...
+            'HorizontalAlignment', 'Left','Background','w'); 
+        uicontrol(f2,'style','text','Units','Pixels',...
+            'Position',[10 f2.Position(4)-40 800 15],'String',[beamPhasesAngles,';  ',beamDirections], ...
+            'HorizontalAlignment', 'Left','Background','w'); 
+    end
     %%%%  This was for some 1D plots
     % f9 = figure(9);
     % set(f9,'Position',[100,900-figHeight,800,figHeight])
@@ -173,130 +170,129 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWith
     % Making larger figure
 %     figHeight2 = 800;
 %     figWidth = figHeight2*dim1/dim2 + 100*dim1;  % Extra 100*dim1 to account for color bar width
-    
-    f3 = figure();
-%     set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
-    set(f3,'color','w')
-    
-    % Initializing parameters for the cosine terms
-    subPlotLabels = cell(dim2,dim1);
-    waveAmplitudes = zeros(1,numComponentPotentials);
-    deltaKs = zeros(numComponentPotentials,2);
-    deltaKsUnitless = zeros(numComponentPotentials,2);
-    deltaPhis = zeros(1,numComponentPotentials);
-    subplots = cell(1,numComponentPotentials);
-    
-    jj = 1; % An index for which component cosine in the potential
-    
-    totalFromCompSum = zeros(size(X));
-    
-    for step = 1:floor(numWaves/2)
-        pp = 1;
-        while (pp<=numWaves)&&((~(step==numWaves/2))||(pp<=numWaves/2))
-            % Conditional expression:  Usually you want pp to run from 1 to
-            % numWaves (this is the "(pp<=numWaves)"),  However, in the
-            % case that step == numWaves/2, you will double count pairs
-            % unless you stop at (pp<=numWaves/2)  (this is the "(~(step==numWaves/2))||(pp<=numWaves/2)")
-            
-            qq = mod(pp+step-1,numWaves)+1;  % Index of the second wave for each pair
-            
-            
-            % Calculate parameters of the cosine term of the potential
-            waveAmplitudes(jj) = EzAmp(pp)*EzAmp(qq) + Epara(pp)*Epara(qq)*cos(th(pp)-th(qq));  
-            
-            deltaKs(jj,:) = kVects(pp,:) - kVects(qq,:);
-            deltaKsUnitless(jj,:) = deltaKs(jj,:)./(kMag);
-            deltaPhis(jj) = ph(pp) - ph(qq);
-            subPlotLabels{jj} = {[num2str(pp) '-' num2str(qq) ';  Depth=' num2str(2*waveAmplitudes(jj))...
-                ';  $\delta\mathbf{K}$=[' num2str(round(deltaKs(jj,1)./(kMag),2)) ', ' num2str(round(deltaKs(jj,2)./(kMag),2)) '], Units of [$k_l$] ' ]
-                [ '  Direction Angle:  ' num2str(round(180/pi*atan2(deltaKs(jj,2),deltaKs(jj,1))))...
-                '$^{\circ}$'  '; Phase=' num2str(round((180/pi)*deltaPhis(jj),2)) '$^{\circ}$']};
+    if(plots)
+        f3 = figure();
+    %     set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
+        set(f3,'color','w')
+    end
+        % Initializing parameters for the cosine terms
+        subPlotLabels = cell(dim2,dim1);
+        waveAmplitudes = zeros(1,numComponentPotentials);
+        deltaKs = zeros(numComponentPotentials,2);
+        deltaKsUnitless = zeros(numComponentPotentials,2);
+        deltaPhis = zeros(1,numComponentPotentials);
+        subplots = cell(1,numComponentPotentials);
 
-            dKx = deltaKs(jj,1);
-            dKy = deltaKs(jj,2);
-            compWaveMatrix = waveAmplitudes(jj)*cos(dKx*X + dKy*Y - deltaPhis(jj));
-            totalFromCompSum = totalFromCompSum + compWaveMatrix;
+        jj = 1; % An index for which component cosine in the potential
 
-            
-            % Create subplot of cosine term in potential
-            subplots{jj} = subplot(dim2,dim1,jj);
-%             con = contourf(X,Y,(totalFromCompSum),N);
-            contourf(X,Y,(compWaveMatrix+abs(waveAmplitudes(jj))),N);
-            xlabel('X Position, [$\lambda$]','interpreter','latex')
-            ylabel('Y Position, [$\lambda$]','interpreter','latex')
-            view(2)
-            title(subPlotLabels{jj},'interpreter','latex')
-            colorbar
-            
-            
-            hold on
-            
-            iPts = GuideLineBoundaryIntersectionPoints(deltaKs(jj,:),deltaPhis(jj),xMin,xMax,yMin,yMax,waveAmplitudes(jj)<0);
+        totalFromCompSum = zeros(size(X));
+
+        for step = 1:floor(numWaves/2)
+            pp = 1;
+            while (pp<=numWaves)&&((~(step==numWaves/2))||(pp<=numWaves/2))
+                % Conditional expression:  Usually you want pp to run from 1 to
+                % numWaves (this is the "(pp<=numWaves)"),  However, in the
+                % case that step == numWaves/2, you will double count pairs
+                % unless you stop at (pp<=numWaves/2)  (this is the "(~(step==numWaves/2))||(pp<=numWaves/2)")
+
+                qq = mod(pp+step-1,numWaves)+1;  % Index of the second wave for each pair
+
+
+                % Calculate parameters of the cosine term of the potential
+                waveAmplitudes(jj) = EzAmp(pp)*EzAmp(qq) + Epara(pp)*Epara(qq)*cos(th(pp)-th(qq));  
+
+                deltaKs(jj,:) = kVects(pp,:) - kVects(qq,:);
+                deltaKsUnitless(jj,:) = deltaKs(jj,:)./(kMag);
+                deltaPhis(jj) = ph(pp) - ph(qq);
+                subPlotLabels{jj} = {[num2str(pp) '-' num2str(qq) ';  Depth=' num2str(2*waveAmplitudes(jj))...
+                    ';  $\delta\mathbf{K}$=[' num2str(round(deltaKs(jj,1)./(kMag),2)) ', ' num2str(round(deltaKs(jj,2)./(kMag),2)) '], Units of [$k_l$] ' ]
+                    [ '  Direction Angle:  ' num2str(round(180/pi*atan2(deltaKs(jj,2),deltaKs(jj,1))))...
+                    '$^{\circ}$'  '; Phase=' num2str(round((180/pi)*deltaPhis(jj),2)) '$^{\circ}$']};
+
+                dKx = deltaKs(jj,1);
+                dKy = deltaKs(jj,2);
+                compWaveMatrix = waveAmplitudes(jj)*cos(dKx*X + dKy*Y - deltaPhis(jj));
+                totalFromCompSum = totalFromCompSum + compWaveMatrix;
+
+                if(plots)
+                    % Create subplot of cosine term in potential
+                    subplots{jj} = subplot(dim2,dim1,jj);
+        %             con = contourf(X,Y,(totalFromCompSum),N);
+                    contourf(X,Y,(compWaveMatrix+abs(waveAmplitudes(jj))),N);
+                    xlabel('X Position, [$\lambda$]','interpreter','latex')
+                    ylabel('Y Position, [$\lambda$]','interpreter','latex')
+                    view(2)
+                    title(subPlotLabels{jj},'interpreter','latex')
+                    colorbar
+
+
+                    hold on
+
+                    iPts = GuideLineBoundaryIntersectionPoints(deltaKs(jj,:),deltaPhis(jj),xMin,xMax,yMin,yMax,waveAmplitudes(jj)<0);
+                    for rr = 1:length(iPts)
+                        plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'k','LineWidth',2)
+                    end
+                end
+                % Increasing iteration index
+                jj = jj+1;
+                pp = pp+1;
+
+    %             disp('While Logical')
+    %             disp((pp<=numWaves)&&((~(step==numWaves/2))||(pp<=numWaves/2)))
+            end
+        end
+        totalFromCompSum = totalFromCompSum + 0.5*sum(A.*A);
+
+        ASorted = sort(A,'descend');
+
+        climMax = 2*ASorted(1)*ASorted(2);
+    if(plots)
+        for jj = 1:numComponentPotentials
+            subplots{jj}.CLim = [0,climMax];
+        end
+
+        % Making a plot of the whole potential from the sum of component waves
+        f4 = figure;
+    %     set(f4,'Position',[200,950-figHeight-200,800,figHeight])
+        set(f4,'color','w')
+        contourf(X,Y,(totalFromCompSum),N);
+        xlabel('X Position, [$\lambda$]','interpreter','latex')
+        ylabel('Y Position, [$\lambda$]','interpreter','latex')
+        view(2)
+    %     s.EdgeColor = 'none';
+        colorbar
+        colormap(parula)
+        hold on
+
+        %% Drawing lines on the total plot
+    %     plot([0.5,1],[0.5,1],'k','LineWidth',2)
+
+
+        for jj=1:numComponentPotentials
+            iPts = GuideLineBoundaryIntersectionPoints(deltaKs(jj,:),deltaPhis(jj),xMin,xMax,yMin,yMax,(waveAmplitudes(jj)<0));
             for rr = 1:length(iPts)
-                plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'k','LineWidth',2)
+                if ismember(jj,[1,2])
+                    plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'k','LineWidth',2)
+                end
+                if ismember(jj,[3,4])
+                    plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'g-','LineWidth',2)
+                end
+                if ismember(jj,[5,6])
+                    plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'r-','LineWidth',2)
+                end
             end
-            
-            % Increasing iteration index
-            jj = jj+1;
-            pp = pp+1;
-            
-%             disp('While Logical')
-%             disp((pp<=numWaves)&&((~(step==numWaves/2))||(pp<=numWaves/2)))
+
         end
-    end
-    totalFromCompSum = totalFromCompSum + 0.5*sum(A.*A);
-
-    ASorted = sort(A,'descend');
-    
-    climMax = 2*ASorted(1)*ASorted(2);
-
-    for jj = 1:numComponentPotentials
-        subplots{jj}.CLim = [0,climMax];
-    end
-    
-    % Making a plot of the whole potential from the sum of component waves
-    f4 = figure;
-%     set(f4,'Position',[200,950-figHeight-200,800,figHeight])
-    set(f4,'color','w')
-    contourf(X,Y,(totalFromCompSum),N);
-    xlabel('X Position, [$\lambda$]','interpreter','latex')
-    ylabel('Y Position, [$\lambda$]','interpreter','latex')
-    view(2)
-%     s.EdgeColor = 'none';
-    colorbar
-    colormap(parula)
-    hold on
-    
-    %% Drawing lines on the total plot
-%     plot([0.5,1],[0.5,1],'k','LineWidth',2)
-    
-    
-    for jj=1:numComponentPotentials
-        iPts = GuideLineBoundaryIntersectionPoints(deltaKs(jj,:),deltaPhis(jj),xMin,xMax,yMin,yMax,(waveAmplitudes(jj)<0));
-        for rr = 1:length(iPts)
-            if ismember(jj,[1,2])
-                plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'k','LineWidth',2)
-            end
-            if ismember(jj,[3,4])
-                plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'g-','LineWidth',2)
-            end
-            if ismember(jj,[5,6])
-                plot([iPts(rr).x1,iPts(rr).x2],[iPts(rr).y1,iPts(rr).y2],'r-','LineWidth',2)
-            end
-        end
-        
-    end
-    
     
 
-    % Adding parameters to the top of the figure
-    uicontrol(f2,'style','text','Units','Pixels',...
-        'Position',[10 f2.Position(4)-20 800 15],'String',[EAmps,';  ',beamPolarizationAngles,';  '], ...
-        'HorizontalAlignment', 'Left','Background','w'); 
-    uicontrol(f2,'style','text','Units','Pixels',...
-        'Position',[10 f2.Position(4)-40 800 15],'String',[beamPhasesAngles,';  ',beamDirections], ...
-        'HorizontalAlignment', 'Left','Background','w'); 
-    
+        % Adding parameters to the top of the figure
+        uicontrol(f2,'style','text','Units','Pixels',...
+            'Position',[10 f2.Position(4)-20 800 15],'String',[EAmps,';  ',beamPolarizationAngles,';  '], ...
+            'HorizontalAlignment', 'Left','Background','w'); 
+        uicontrol(f2,'style','text','Units','Pixels',...
+            'Position',[10 f2.Position(4)-40 800 15],'String',[beamPhasesAngles,';  ',beamDirections], ...
+            'HorizontalAlignment', 'Left','Background','w'); 
+    end
 % %     Check Method Agreement
 %     f5 = figure;
 %     set(f5,'Position',[250,950-figHeight-250,800,figHeight])
