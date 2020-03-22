@@ -1,4 +1,4 @@
-function [f1,f2]=GeneralLatticeComplexRepWithComponents()
+function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWithComponents()
     %% THIS FUNCTION IS USED TO MODEL A GENERAL 2D OPTICAL POTENTIAL
         % Presently it is coded for multipled interfering laser beams (plane waves)
         % Enables setting of wave amplitude, wave phase, wave propagation
@@ -13,10 +13,11 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
     close all
 
     %% Initialize Position Space Mesh and Time Mesh
+    %units of lamba, the lattice light wavelength
     xMin = 0;
-    xMax = 3;
+    xMax = 1;  %units of lambda
     yMin = 0;
-    yMax = 3;
+    yMax = 1;   %units of lambda
     xStep = 0.01;
     yStep = 0.01;
     
@@ -33,19 +34,19 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
 
     
     % Electric field amplitudes
-    A = [0.6,1,0.55,1];
+    A = [1,1,0.6,0.5];
 
     
     % Light beam phases
-    ph_deg = [0, 90, 0, -75];
+    ph_deg = [0, 0, 90, -70];
     ph = (pi/180)*ph_deg;
 
     
     %Planewave propagation direction angles (0 = positive x direction, 90deg = positive y direction)
     th_deg = [0,...
-        180,...
         90,...
-        270]+45;
+        180,...
+        270];
 
     th = (pi/180)*th_deg;
 
@@ -83,7 +84,6 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
         Ey(:,:,qq) = E(:,:,qq)*(cos(th(qq))*sin(pol(qq)));
         Ez(:,:,qq) = E(:,:,qq)*(cos(pol(qq)));
     end
-
     % Calculating the total x,y,z components of electric field by summing the
     % cartesian vector components of the complex electric field
     % representation
@@ -116,6 +116,8 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
 %     set(f1,'Position',[20,950-figHeight,800,figHeight])
     set(f1,'color','w')
     contourf(X,Y,(avgI),N)
+    xlabel('X Position, [$\lambda$]','interpreter','latex')
+    ylabel('Y Position, [$\lambda$]','interpreter','latex')
     colorbar
     colormap(parula)
     set(f1,'Units','Pixels');
@@ -134,6 +136,8 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
 %     set(f2,'Position',[850,950-figHeight,800,figHeight])
     set(f2,'color','w')
     s = surf(X,Y,(avgI));
+    xlabel('X Position, [$\lambda$]','interpreter','latex')
+    ylabel('Y Position, [$\lambda$]','interpreter','latex')
     view(2)
     s.EdgeColor = 'none';
     colorbar
@@ -167,8 +171,8 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
     [dim1,dim2]=goodSubFigDims(numComponentPotentials);
     
     % Making larger figure
-    figHeight2 = 800;
-    figWidth = figHeight2*dim1/dim2 + 100*dim1;  % Extra 100*dim1 to account for color bar width
+%     figHeight2 = 800;
+%     figWidth = figHeight2*dim1/dim2 + 100*dim1;  % Extra 100*dim1 to account for color bar width
     
     f3 = figure();
 %     set(f3,'Position',[40,950-figHeight2,figWidth,figHeight2])
@@ -178,6 +182,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
     subPlotLabels = cell(dim2,dim1);
     waveAmplitudes = zeros(1,numComponentPotentials);
     deltaKs = zeros(numComponentPotentials,2);
+    deltaKsUnitless = zeros(numComponentPotentials,2);
     deltaPhis = zeros(1,numComponentPotentials);
     subplots = cell(1,numComponentPotentials);
     
@@ -194,14 +199,18 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
             % unless you stop at (pp<=numWaves/2)  (this is the "(~(step==numWaves/2))||(pp<=numWaves/2)")
             
             qq = mod(pp+step-1,numWaves)+1;  % Index of the second wave for each pair
-
+            
             
             % Calculate parameters of the cosine term of the potential
             waveAmplitudes(jj) = EzAmp(pp)*EzAmp(qq) + Epara(pp)*Epara(qq)*cos(th(pp)-th(qq));  
             
             deltaKs(jj,:) = kVects(pp,:) - kVects(qq,:);
+            deltaKsUnitless(jj,:) = deltaKs(jj,:)./(kMag);
             deltaPhis(jj) = ph(pp) - ph(qq);
-            subPlotLabels{jj} = [num2str(pp) '-' num2str(qq) ';  Depth=' num2str(2*waveAmplitudes(jj)) ';  deltaK=[' num2str(round(deltaKs(jj,1),2)) ', ' num2str(round(deltaKs(jj,2),2)) '] ;  Direction Angle:  ' num2str(round(180/pi*atan2(deltaKs(jj,2),deltaKs(jj,1))))];
+            subPlotLabels{jj} = {[num2str(pp) '-' num2str(qq) ';  Depth=' num2str(2*waveAmplitudes(jj))...
+                ';  $\delta\mathbf{K}$=[' num2str(round(deltaKs(jj,1)./(kMag),2)) ', ' num2str(round(deltaKs(jj,2)./(kMag),2)) '], Units of [$k_l$] ' ]
+                [ '  Direction Angle:  ' num2str(round(180/pi*atan2(deltaKs(jj,2),deltaKs(jj,1))))...
+                '$^{\circ}$'  '; Phase=' num2str(round((180/pi)*deltaPhis(jj),2)) '$^{\circ}$']};
 
             dKx = deltaKs(jj,1);
             dKy = deltaKs(jj,2);
@@ -213,8 +222,10 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
             subplots{jj} = subplot(dim2,dim1,jj);
 %             con = contourf(X,Y,(totalFromCompSum),N);
             contourf(X,Y,(compWaveMatrix+abs(waveAmplitudes(jj))),N);
+            xlabel('X Position, [$\lambda$]','interpreter','latex')
+            ylabel('Y Position, [$\lambda$]','interpreter','latex')
             view(2)
-            title(subPlotLabels{jj})
+            title(subPlotLabels{jj},'interpreter','latex')
             colorbar
             
             
@@ -248,6 +259,8 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponents()
 %     set(f4,'Position',[200,950-figHeight-200,800,figHeight])
     set(f4,'color','w')
     contourf(X,Y,(totalFromCompSum),N);
+    xlabel('X Position, [$\lambda$]','interpreter','latex')
+    ylabel('Y Position, [$\lambda$]','interpreter','latex')
     view(2)
 %     s.EdgeColor = 'none';
     colorbar
