@@ -15,9 +15,9 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
     %% Initialize Position Space Mesh and Time Mesh
     %units of lamba, the lattice light wavelength
     xMin = 0;
-    xMax = 1;
+    xMax = 1;  %units of lambda
     yMin = 0;
-    yMax = 1;
+    yMax = 1;   %units of lambda
     xStep = 0.01;
     yStep = 0.01;
     
@@ -205,7 +205,10 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
             
             deltaKs(jj,:) = kVects(pp,:) - kVects(qq,:);
             deltaPhis(jj) = ph(pp) - ph(qq);
-            subPlotLabels{jj} = [num2str(pp) '-' num2str(qq) ';  Depth=' num2str(2*waveAmplitudes(jj)) ';  deltaK=[' num2str(round(deltaKs(jj,1),2)) ', ' num2str(round(deltaKs(jj,2),2)) '] ;  Direction Angle:  ' num2str(round(180/pi*atan2(deltaKs(jj,2),deltaKs(jj,1))))];
+            subPlotLabels{jj} = {[num2str(pp) '-' num2str(qq) ';  Depth=' num2str(2*waveAmplitudes(jj))...
+                ';  $\delta\mathbf{K}$=[' num2str(round(deltaKs(jj,1),2)) ', ' num2str(round(deltaKs(jj,2),2)) '] ' ]
+                                 [ '  Direction Angle:  ' num2str(round(180/pi*atan2(deltaKs(jj,2),deltaKs(jj,1))))...
+                                 '$^{\circ}$'  '; Phase=' num2str(round((180/pi)*deltaPhis(jj),2)) '$^{\circ}$']};
 
             dKx = deltaKs(jj,1);
             dKy = deltaKs(jj,2);
@@ -220,7 +223,7 @@ function [f1,f2]=GeneralLatticeComplexRepWithComponentsPLAYING4()
             xlabel('X Position, [$\lambda$]','interpreter','latex')
             ylabel('Y Position, [$\lambda$]','interpreter','latex')
             view(2)
-            title(subPlotLabels{jj})
+            title(subPlotLabels{jj},'interpreter','latex')
             colorbar
             
             
