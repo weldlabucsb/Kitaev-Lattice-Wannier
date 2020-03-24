@@ -10,6 +10,14 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWith
         % Extention possible to waves with elliptical polarization,
         % but not implemented here.
         
+    if (nargin < 1)
+        A = [1,1,0.6,0.5];
+        ph_deg = [0, 0, 90, -70];
+        th_deg = [0,90,180,270];
+        pol_deg = [0,0,0,0];
+        plots = 1;
+    end
+        
     close all
 
     %% Initialize Position Space Mesh and Time Mesh
