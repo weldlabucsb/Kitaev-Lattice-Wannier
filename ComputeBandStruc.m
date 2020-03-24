@@ -15,10 +15,12 @@ ph_deg = [0, 0, 90, -70];
 th_deg = [0,90,180,270];
 pol_deg = [0,0,0,0];
 plots = 0; %boolean to turn plots on or off
-[waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots);
+[waveAmplitudes,deltaKsUnitless,deltaPhis,maxAmp]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots);
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
+potentialDepth = 3; %in Er!!
+waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
 
@@ -30,7 +32,7 @@ deltaKsUnitless = round(deltaKsUnitless);
 %point where you would be happy with the accuracy in finding the
 %eigenvalues and vectors, but the KVectors could be arbitrarily large. In
 %this case they are not (<=2), but in principle they could be quite large.
-max_m = 10;
+max_m = 5;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:6
@@ -69,7 +71,8 @@ for ii = 1:mLength
                     components(ii,jj,kk,ll,:,:)=((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1)))+((quasiY+jj-(max_m+1)).*(quasiY+jj-(max_m+1)));
                 end
                 if (abs(ii-kk) <= max_m && abs(jj-ll) <= max_m)
-                    components(ii,jj,kk,ll,:,:) = components(ii,jj,kk,ll,:,:) + Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
+%                     components(ii,jj,kk,ll,:,:) = components(ii,jj,kk,ll,:,:) + Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
+                      components(ii,jj,kk,ll,:,:) = Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
                 end
             end
         end
@@ -104,15 +107,23 @@ end
 % fig1 = figure;
 hold all;
 
-num_bands = 3;
-plotmat = zeros(qsize,qsize);
-for ii = 1:qsize
-    for jj = 1:qsize
-        plotmat(ii,jj) = real(eigs(1,ii,jj));
-    end
+num_bands = 1;
+for kk = 1:num_bands
+    surf(quasiX,quasiY,reshape(real(eigs(kk,:,:)),10,10));
 end
-surf(quasiX,quasiY,plotmat);
-
+% plotmat = zeros(num_bands,qsize,qsize);
+% for kk = 1:num_bands
+%     for ii = 1:qsize
+%         for jj = 1:qsize
+%             plotmat(kk,ii,jj) = real(eigs(kk,ii,jj));
+%         end
+%     end
+% end
+% plotting_matrix = zeros(qsize,qsize);
+% for kk = 1:num_bands
+%     plotting_matrix = reshape(plotmat(kk,:,:),10,10);
+%     surf(quasiX,quasiY,plotting_matrix);
+% end
 
 end
 

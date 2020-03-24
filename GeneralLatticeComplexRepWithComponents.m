@@ -1,4 +1,4 @@
-function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots)
+function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots)
     %% THIS FUNCTION IS USED TO MODEL A GENERAL 2D OPTICAL POTENTIAL
         % Presently it is coded for multipled interfering laser beams (plane waves)
         % Enables setting of wave amplitude, wave phase, wave propagation
@@ -250,7 +250,7 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWith
             end
         end
         totalFromCompSum = totalFromCompSum + 0.5*sum(A.*A);
-
+        potentialDepth = max(max(totalFromCompSum));
         ASorted = sort(A,'descend');
 
         climMax = 2*ASorted(1)*ASorted(2);
@@ -271,6 +271,8 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis]=GeneralLatticeComplexRepWith
         colorbar
         colormap(parula)
         hold on
+        
+        %return the maximum value of the potential
 
         %% Drawing lines on the total plot
     %     plot([0.5,1],[0.5,1],'k','LineWidth',2)
