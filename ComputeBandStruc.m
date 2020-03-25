@@ -19,7 +19,7 @@ plots = 0; %boolean to turn plots on or off
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 3; %in Er!!
+potentialDepth = 5; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -43,73 +43,71 @@ for jj = 1:6
     %matrix corresponds to the (0,0) coefficient. This is also related to
     %my above comment, since if the basis is too small, then these
     %arguments could be negative and matlab will complain :(
-    Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) = Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) + waveAmplitudes(jj)*(exp(-1i*deltaPhis(jj)))./2;
-    Vcoeff(-xKcomp+(max_m+1),-yKcomp+(max_m+1)) = Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) + waveAmplitudes(jj)*(exp(1i*deltaPhis(jj)))./2;
+    Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) = Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) + waveAmplitudes(jj).*(exp(-1i*deltaPhis(jj)))./2;
+    Vcoeff(-xKcomp+(max_m+1),-yKcomp+(max_m+1)) = Vcoeff(-xKcomp+(max_m+1),-yKcomp+(max_m+1)) + waveAmplitudes(jj).*(exp(1i*deltaPhis(jj)))./2;
 end
+
 %% Explicitly Create the Hamiltonian as a Matrix
 % this may look simple yet confusing. There is a bit going on here.
 % Hopefully the document can help explain
 
-qsize = 10;
+qsize = 100;
 %qusimomenta that you want
-[quasiX,quasiY] = meshgrid(linspace(-1,1,qsize),linspace(-1,1,qsize));
-size(quasiX)
-components = zeros(mLength,mLength,mLength,mLength,qsize,qsize);
+zone_number = 1; %how many extended zones to plot
+[quasiX,quasiY] = meshgrid(linspace(-0.5*zone_number,0.5*zone_number,qsize),linspace(-0.5*zone_number,0.5*zone_number,qsize));
 %hammy is the hamiltonian. Needs to accommodate all of the information in
 %components but in 2-d
 hammy = zeros(mLength^2,mLength^2,qsize,qsize);
+tic
 for ii = 1:mLength
     for jj = 1:mLength
         for kk = 1:mLength
             for ll = 1:mLength
                 %to transform to the code, each of the indices actual
                 %values in terms of the matlab indices are:
-                % ii(actual) = ii - (max_m+1)
+                % ii(actual) = ii - (max_m+1). This way the center of the
+                % matrix corresponds to momentum index (0,0).
                 if (ii==kk && jj==ll)
 %                     size(components(ii,jj,kk,ll,:,:))
 %                     size(((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1))))
-                    components(ii,jj,kk,ll,:,:)=((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1)))+((quasiY+jj-(max_m+1)).*(quasiY+jj-(max_m+1)));
+                    hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:)=((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1)))+((quasiY+jj-(max_m+1)).*(quasiY+jj-(max_m+1)));
                 end
                 if (abs(ii-kk) <= max_m && abs(jj-ll) <= max_m)
 %                     components(ii,jj,kk,ll,:,:) = components(ii,jj,kk,ll,:,:) + Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
-                      components(ii,jj,kk,ll,:,:) = Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
+                      hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:) = hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:)+ Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
                 end
             end
         end
     end
 end
-
-
-%% Casting in 2-d Matrix Form
-%now is the time we need to make this a 2-dimensional matrix to find the
-%eigenvalues. I'm not going to do this in the most intuitive way, just the
-%quickest. 
-for ii = 1:mLength
-    for jj = 1:mLength
-        for kk = 1:mLength
-            for ll = 1:mLength
-                hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:) = components(ii,jj,kk,ll,:,:);
-            end
-        end
-    end
-end
-
+toc
+% for ii = 1:mLength
+%     for jj = 1:mLength
+%         for kk = 1:mLength
+%             for ll = 1:mLength
+%                 hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:) = components(ii,jj,kk,ll,:,:);
+%             end
+%         end
+%     end
+% end
 eigs = zeros((mLength^2),qsize,qsize);
 for ii = 1:qsize
     for jj = 1:qsize
-        e = eig(hammy(:,:,ii,jj));
-        eigs(:,ii,jj) = e;
+        eigs(:,ii,jj) = eig(hammy(:,:,ii,jj))+(0.25*sum(A.*A)).*(potentialDepth./maxAmp);
     end
 end
-
+toc
 %% Plot the band structure
 
 % fig1 = figure;
 hold all;
 
-num_bands = 1;
+num_bands = 3;
 for kk = 1:num_bands
-    surf(quasiX,quasiY,reshape(real(eigs(kk,:,:)),10,10));
+    surf(quasiX,quasiY,reshape(real(eigs(kk,:,:)),qsize,qsize));
+    xlabel('x quasimomentum, [$k_l$]','interpreter','latex');
+    ylabel('y quasimomentum, [$k_l$]','interpreter','latex');
+    zlabel('Energy, [$E_R$]','interpreter','latex');
 end
 % plotmat = zeros(num_bands,qsize,qsize);
 % for kk = 1:num_bands

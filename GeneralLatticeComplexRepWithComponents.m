@@ -251,6 +251,9 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLattic
         end
         totalFromCompSum = totalFromCompSum + 0.5*sum(A.*A);
         potentialDepth = max(max(totalFromCompSum));
+%         waveAmplitudes(length(waveAmplitudes)+1) = 0.5*sum(A.*A);
+%         deltaKsUnitless(length(deltaKsUnitless)+1,:) = [0 0];
+%         deltaPhis(length(deltaPhis)+1) = 0;
         ASorted = sort(A,'descend');
 
         climMax = 2*ASorted(1)*ASorted(2);
