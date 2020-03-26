@@ -10,16 +10,24 @@ function [] = ComputeBandStruc()
 %% generate the lattice potential
 %using the 6 cosine components of the lattice potential generated as output
 %from Peter's code.
+% A = [1,1,0,0];
 A = [1,1,0.6,0.5];
+% ph_deg = [0, 0, 0, 0];
 ph_deg = [0, 0, 90, -70];
+% th_deg = [0,90,180,270];
 th_deg = [0,90,180,270];
 pol_deg = [0,0,0,0];
-plots = 0; %boolean to turn plots on or off
+% pol_deg = [0,0,0,0];
+% A = [1,1,1,1];
+% ph_deg = [0, 0,250,60];
+% th_deg = [0,90,180,270];
+% pol_deg = [0,0,0,0];
+plots = 1; %boolean to turn plots on or off
 [waveAmplitudes,deltaKsUnitless,deltaPhis,maxAmp]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots);
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 5; %in Er!!
+potentialDepth = 10; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -53,7 +61,7 @@ end
 
 qsize = 100;
 %qusimomenta that you want
-zone_number = 1; %how many extended zones to plot
+zone_number = 3; %how many extended zones to plot
 [quasiX,quasiY] = meshgrid(linspace(-0.5*zone_number,0.5*zone_number,qsize),linspace(-0.5*zone_number,0.5*zone_number,qsize));
 %hammy is the hamiltonian. Needs to accommodate all of the information in
 %components but in 2-d
@@ -70,7 +78,7 @@ for ii = 1:mLength
                 if (ii==kk && jj==ll)
 %                     size(components(ii,jj,kk,ll,:,:))
 %                     size(((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1))))
-                    hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:)=((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1)))+((quasiY+jj-(max_m+1)).*(quasiY+jj-(max_m+1)));
+                    hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:)=reshape(hammy((mLength*(ii-1)+jj),(mLength*(kk-1)+ll),:,:),qsize,qsize)+((quasiX+ii-(max_m+1)).*(quasiX+ii-(max_m+1)))+((quasiY+jj-(max_m+1)).*(quasiY+jj-(max_m+1)));
                 end
                 if (abs(ii-kk) <= max_m && abs(jj-ll) <= max_m)
 %                     components(ii,jj,kk,ll,:,:) = components(ii,jj,kk,ll,:,:) + Vcoeff((ii-kk+(max_m+1)),(jj-ll+(max_m+1)));
@@ -100,6 +108,7 @@ toc
 %% Plot the band structure
 
 % fig1 = figure;
+figure;
 hold all;
 
 num_bands = 3;
@@ -107,7 +116,8 @@ for kk = 1:num_bands
     surf(quasiX,quasiY,reshape(real(eigs(kk,:,:)),qsize,qsize));
     xlabel('x quasimomentum, [$k_l$]','interpreter','latex');
     ylabel('y quasimomentum, [$k_l$]','interpreter','latex');
-    zlabel('Energy, [$E_R$]','interpreter','latex');
+    zlab = ['Energy, [$E_R$]; lattice depth = ' num2str(potentialDepth) ' [$E_R$]'];
+    zlabel(zlab, 'interpreter','latex');
 end
 % plotmat = zeros(num_bands,qsize,qsize);
 % for kk = 1:num_bands

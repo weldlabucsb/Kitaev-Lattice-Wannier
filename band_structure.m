@@ -3,7 +3,7 @@
 
 lattice_wavelength = 1.064e-6;%meters
 num_band = 5;
-lattice_depth = 200; %Er
+lattice_depth = 20; %Er
 v_0 = lattice_depth;
 max_m = 50;
 m_len = max_m*2+1
