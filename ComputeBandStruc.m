@@ -27,7 +27,7 @@ plots = 1; %boolean to turn plots on or off
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 10; %in Er!!
+potentialDepth = 100; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -40,7 +40,7 @@ waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %point where you would be happy with the accuracy in finding the
 %eigenvalues and vectors, but the KVectors could be arbitrarily large. In
 %this case they are not (<=2), but in principle they could be quite large.
-max_m = 5;
+max_m = 15;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:6
@@ -59,7 +59,7 @@ end
 % this may look simple yet confusing. There is a bit going on here.
 % Hopefully the document can help explain
 
-qsize = 100;
+qsize = 10;
 %qusimomenta that you want
 zone_number = 3; %how many extended zones to plot
 [quasiX,quasiY] = meshgrid(linspace(-0.5*zone_number,0.5*zone_number,qsize),linspace(-0.5*zone_number,0.5*zone_number,qsize));
@@ -98,10 +98,11 @@ toc
 %         end
 %     end
 % end
-eigs = zeros((mLength^2),qsize,qsize);
+eigvals = zeros((mLength^2),(mLength^2),qsize,qsize);
+eigvecs = zeros((mLength^2),(mLength^2),qsize,qsize);
 for ii = 1:qsize
     for jj = 1:qsize
-        eigs(:,ii,jj) = eig(hammy(:,:,ii,jj))+(0.25*sum(A.*A)).*(potentialDepth./maxAmp);
+        [eigvecs(:,:,ii,jj),eigvals(:,:,ii,jj)] = eig(hammy(:,:,ii,jj));
     end
 end
 toc
@@ -113,26 +114,59 @@ hold all;
 
 num_bands = 3;
 for kk = 1:num_bands
-    surf(quasiX,quasiY,reshape(real(eigs(kk,:,:)),qsize,qsize));
+    surf(quasiX,quasiY,reshape(eigvals(kk,kk,:,:),qsize,qsize));
     xlabel('x quasimomentum, [$k_l$]','interpreter','latex');
     ylabel('y quasimomentum, [$k_l$]','interpreter','latex');
     zlab = ['Energy, [$E_R$]; lattice depth = ' num2str(potentialDepth) ' [$E_R$]'];
     zlabel(zlab, 'interpreter','latex');
 end
-% plotmat = zeros(num_bands,qsize,qsize);
-% for kk = 1:num_bands
-%     for ii = 1:qsize
-%         for jj = 1:qsize
-%             plotmat(kk,ii,jj) = real(eigs(kk,ii,jj));
-%         end
-%     end
-% end
-% plotting_matrix = zeros(qsize,qsize);
-% for kk = 1:num_bands
-%     plotting_matrix = reshape(plotmat(kk,:,:),10,10);
-%     surf(quasiX,quasiY,plotting_matrix);
-% end
+
+
+%% Plot the bloch functions
+%The bloch functions are themselves a function of the quasimomentum, so
+%select a mometum point here to look at. 
+qxIndex = round(qsize/2);
+qyIndex = qxIndex;
+bandNumber = 2;
+%this is the eigenvector output from the eig function. Remember that we
+%'compactified' the dimension here, so we want to make it back into the
+%natural matrix form
+weightsColumn  = eigvecs(:,bandNumber,qxIndex,qyIndex);
+weightsMatrix = zeros(mLength,mLength);
+for ii = 1:mLength
+    for jj = 1:mLength
+        weightsMatrix(ii,jj) = weightsColumn((mLength*(ii-1)+jj));
+    end
+end
+xMin = 0;
+xMax = 1;  %units of lambda
+yMin = 0;
+yMax = 1;  
+numpoints = 100;
+[X,Y] = meshgrid(linspace(xMin,xMax,numpoints),linspace(yMin,yMax,numpoints));
+U = bloch_func(weightsMatrix,max_m,X,Y);
+figure
+surf(X,Y,abs(U));
 
 end
 
+function [U] = bloch_func(weights,max_m,xmat,ymat)
+%NOTE: we have to be a bit careful when using meshgrid here. Unfortunately
+%the A(i,j) matrix indexing convention conflicts with our traditional idea
+%of (x,y) pairs. For (i,j), i represents a vertical displacement, but for (x,y)
+%the first index represents horizontal displacement. If this isn't clear,
+%try testing a simple example of meshgrid, or check MATLAB documentation
+%site. Long story short we can just transpose the weights matrix to take
+%this into account
+[mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
+U = zeros(length(xmat(:,1)),length(ymat(:,1)));
+for ii = 1:(2*max_m+1)
+    for jj = 1:(2*max_m+1)
+        mx = mxMat(ii,jj);
+        my = myMat(ii,jj);
+        U = U + weights(jj,ii).*(exp(1i.*2.*pi.*mx.*xmat)).*(exp(1i.*2.*pi.*my.*ymat));
+    end
+end
+
+end
 
