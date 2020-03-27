@@ -3,7 +3,7 @@
 
 lattice_wavelength = 1.064e-6;%meters
 num_band = 5;
-lattice_depth = 20; %Er
+lattice_depth = 8.5; %Er
 v_0 = lattice_depth;
 max_m = 50;
 m_len = max_m*2+1
@@ -38,7 +38,7 @@ for i = 1:num_band
     %plot the energy vs quasimomentum
     plot(qs,eigs(i,:));
 end
-xlabel('quasimomentum(q), [k_{l}]')
+xlabel('quasimomentum(q), [$k_{l}$]','interpreter','latex')
 ylabel('energy in Recoils')
 
 %now we want to be able to plot the bloch functions... We need the
