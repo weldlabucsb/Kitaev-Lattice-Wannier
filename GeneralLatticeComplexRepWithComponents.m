@@ -23,9 +23,9 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLattic
     %% Initialize Position Space Mesh and Time Mesh
     %units of lamba, the lattice light wavelength
     xMin = 0;
-    xMax = 3;  %units of lambda
+    xMax = 1;  %units of lambda
     yMin = 0;
-    yMax = 3;   %units of lambda
+    yMax = 1;   %units of lambda
     xStep = 0.01;
     yStep = 0.01;
     

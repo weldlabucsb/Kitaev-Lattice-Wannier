@@ -42,7 +42,7 @@ end
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 1; %in Er!!
+potentialDepth = 100; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -55,7 +55,7 @@ waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %point where you would be happy with the accuracy in finding the
 %eigenvalues and vectors, but the KVectors could be arbitrarily large. In
 %this case they are not (<=2), but in principle they could be quite large.
-max_m = 8;
+max_m = 6;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:length(waveAmplitudes)
@@ -69,14 +69,13 @@ for jj = 1:length(waveAmplitudes)
     Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) = Vcoeff(xKcomp+(max_m+1),yKcomp+(max_m+1)) + waveAmplitudes(jj).*(exp(-1i*deltaPhis(jj)))./2;
     Vcoeff(-xKcomp+(max_m+1),-yKcomp+(max_m+1)) = Vcoeff(-xKcomp+(max_m+1),-yKcomp+(max_m+1)) + waveAmplitudes(jj).*(exp(1i*deltaPhis(jj)))./2;
 end
-
 %% Explicitly Create the Hamiltonian as a Matrix
 % this may look simple yet confusing. There is a bit going on here.
 % Hopefully the document can help explain
 
 qsize = 10;
 %qusimomenta that you want
-zone_number = 3; %how many extended zones to plot
+zone_number = 1; %how many extended zones to plot
 [quasiX,quasiY] = meshgrid(linspace(-0.5*zone_number,0.5*zone_number,qsize),linspace(-0.5*zone_number,0.5*zone_number,qsize));
 %hammy is the hamiltonian. Needs to accommodate all of the information in
 %components but in 2-d
@@ -127,9 +126,9 @@ toc
 figure;
 hold all;
 
-num_bands = 3;
+num_bands = 2;
 for kk = 1:num_bands
-    surf(quasiX,quasiY,reshape(eigvals(kk,kk,:,:),qsize,qsize));
+    surf(quasiX,quasiY,reshape(eigvals(kk,kk,:,:),qsize,qsize),'edgecolor','interp');
     xlabel('x quasimomentum, [$k_l$]','interpreter','latex');
     ylabel('y quasimomentum, [$k_l$]','interpreter','latex');
     zlab = ['Energy, [$E_R$]; lattice depth = ' num2str(potentialDepth) ' [$E_R$]'];
@@ -191,8 +190,11 @@ zlabel(zlab, 'interpreter','latex');
 %% Try to Construct the Wannier States
 %I certainly think that I have some thinking to do here about the best way
 %to construct these states. Reading the thesis we need to adjust the phases
-%to get maximum localization. 
+%to get maximum localization. Need to do some thinking about this
 toc
+
+%wannier states calculated separately for each band
+wannerBand = 1;
 
 
 

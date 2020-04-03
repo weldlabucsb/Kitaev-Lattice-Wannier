@@ -3,7 +3,7 @@
 
 lattice_wavelength = 1.064e-6;%meters
 num_band = 5;
-lattice_depth = 8.5; %Er
+lattice_depth = 100; %Er
 v_0 = lattice_depth;
 max_m = 50;
 m_len = max_m*2+1
@@ -41,6 +41,12 @@ end
 xlabel('quasimomentum(q), [$k_{l}$]','interpreter','latex')
 ylabel('energy in Recoils')
 
+disp('now finding the tunneling matrix element')
+band_max = max(eigs(1,:))
+band_min = min(eigs(1,:))
+band_gap = band_max-band_min
+J = band_gap./4
+J = J.*(915./1064)^2
 %now we want to be able to plot the bloch functions... We need the
 %coefficients of the eigenvector to do this since this is how we get the
 %function...
