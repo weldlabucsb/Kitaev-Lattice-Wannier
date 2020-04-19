@@ -55,7 +55,7 @@ waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %point where you would be happy with the accuracy in finding the
 %eigenvalues and vectors, but the KVectors could be arbitrarily large. In
 %this case they are not (<=2), but in principle they could be quite large.
-max_m = 6;
+max_m = 7;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:length(waveAmplitudes)
@@ -155,10 +155,10 @@ for ii = 1:mLength
     end
 end
 xMin = 0;
-xMax = 1;  %units of lambda
+xMax = 5;  %units of lambda
 yMin = 0;
-yMax = 1;  
-numpoints = 100;
+yMax = 5;  
+numpoints = 70;
 [X,Y] = meshgrid(linspace(xMin,xMax,numpoints),linspace(yMin,yMax,numpoints));
 U = bloch_func(weightsMatrix,max_m,X,Y);
 toc
@@ -175,6 +175,46 @@ ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['Bloch Fxn. [$RE(u_{n = ' num2str(bandNumber)' '}), \mathbf{q} = (' num2str(quasiX(qxIndex,qyIndex)) ',' num2str(quasiY(qxIndex,qyIndex)) ')$'];
 zlabel(zlab, 'interpreter','latex');
 
+%% Construct band projected position operators
+%The bloch wave function is designed to be more general and make bloch
+%waves for all quasimomenta values for the given list of specified bands
+
+%bands to be caluclated. I think that we need 4 for the 4 sub-cell minima
+bands = [1 2 3];
+toc
+U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
+toc
+
+%First let us make the projected x position operator:
+R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));   
+for ii = bands
+    for jj = bands
+        for kk = 1:qsize
+            for ll = 1:qsize
+                for mm = 1:qsize
+                    for nn = 1:qsize
+                        x_part = conj(U(:,:,ii,kk,mm)).*X.*U(:,:,jj,ll,nn);
+                        y_part = conj(U(:,:,ii,kk,mm)).*Y.*U(:,:,jj,ll,nn);
+                        x_element = sum(x_part,'all')*(xMax-xMin)*(yMax-yMin)./(numpoints.^2);
+                        y_element = sum(y_part,'all')*(xMax-xMin)*(yMax-yMin)./(numpoints.^2);
+                        R1((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = x_element;
+                        R2((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = y_element;
+                    end
+                end
+            end
+        end
+    end
+end
+
+toc
+e1 = eig(R1);
+e2 = eig(R2);
+figure()
+plot(real(e1))
+figure
+plot(real(e2))
+% keyboard
 % % Just a quick normalization sanity check. MATLAB should automatically
 % normalize the output eigenvectors. 
 % % disp('now doing integral');
@@ -196,7 +236,6 @@ zlabel(zlab, 'interpreter','latex');
 toc
 
 %wannier states calculated separately for each band
-wannerBand = 1;
 
 
 
