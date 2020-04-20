@@ -75,7 +75,7 @@ Vcoeff = -Vcoeff;
 % this may look simple yet confusing. There is a bit going on here.
 % Hopefully the document can help explain
 
-qsize = 10;
+qsize = 5;
 %qusimomenta that you want
 zone_number = 1; %how many extended zones to plot
 [quasiX,quasiY] = meshgrid(linspace(-0.5*zone_number,0.5*zone_number,qsize),linspace(-0.5*zone_number,0.5*zone_number,qsize));
@@ -154,10 +154,11 @@ for ii = 1:mLength
         weightsMatrix(ii,jj) = weightsColumn((mLength*(ii-1)+jj));
     end
 end
-xMin = 0;
-xMax = 5;  %units of lambda
-yMin = 0;
-yMax = 5;  
+maxval = 3;
+xMin = -maxval;
+xMax = maxval;  %units of lambda
+yMin = -maxval;
+yMax = maxval;  
 numpoints = 70;
 [X,Y] = meshgrid(linspace(xMin,xMax,numpoints),linspace(yMin,yMax,numpoints));
 U = bloch_func(weightsMatrix,max_m,X,Y);
