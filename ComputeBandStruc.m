@@ -229,6 +229,12 @@ plot(real(e2))
 % % disp('integral is')
 % % integral
 
+%% Now the analytic method of finding the wannier functions
+%There is a lot of detail about this in the theory document that I have
+%typed up. Feel free to give that one a read...
+
+
+
 
 %% Try to Construct the Wannier States
 %I certainly think that I have some thinking to do here about the best way
