@@ -1,0 +1,682 @@
+-----------------------------------------------------------------------------
+MAXIMALLY LOCALISED GENERALISED WANNIER FUNCTIONS
+Richard Walters, Giovanni Cotugno, Tomi Johnson, Stephen Clark, Dieter Jaksch
+Atomic and Laser Physics, Clarendon Laboratory, University of Oxford
+-----------------------------------------------------------------------------
+Calculating the bandstructure across a uniform mesh...
+Using time-reversal symmetry; mesh centred on origin
+q = 1/1301
+q = 11/1301
+q = 21/1301
+q = 31/1301
+q = 41/1301
+q = 51/1301
+q = 61/1301
+q = 71/1301
+q = 81/1301
+q = 91/1301
+q = 101/1301
+q = 111/1301
+q = 121/1301
+q = 131/1301
+q = 141/1301
+q = 151/1301
+q = 161/1301
+q = 171/1301
+q = 181/1301
+q = 191/1301
+q = 201/1301
+q = 211/1301
+q = 221/1301
+q = 231/1301
+q = 241/1301
+q = 251/1301
+q = 261/1301
+q = 271/1301
+q = 281/1301
+q = 291/1301
+q = 301/1301
+q = 311/1301
+q = 321/1301
+q = 331/1301
+q = 341/1301
+q = 351/1301
+q = 361/1301
+q = 371/1301
+q = 381/1301
+q = 391/1301
+q = 401/1301
+q = 411/1301
+q = 421/1301
+q = 431/1301
+q = 441/1301
+q = 451/1301
+q = 461/1301
+q = 471/1301
+q = 481/1301
+q = 491/1301
+q = 501/1301
+q = 511/1301
+q = 521/1301
+q = 531/1301
+q = 541/1301
+q = 551/1301
+q = 561/1301
+q = 571/1301
+q = 581/1301
+q = 591/1301
+q = 601/1301
+q = 611/1301
+q = 621/1301
+q = 631/1301
+q = 641/1301
+q = 651/1301
+q = 661/1301
+q = 671/1301
+q = 681/1301
+q = 691/1301
+q = 701/1301
+q = 711/1301
+q = 721/1301
+q = 731/1301
+q = 741/1301
+q = 751/1301
+q = 761/1301
+q = 771/1301
+q = 781/1301
+q = 791/1301
+q = 801/1301
+q = 811/1301
+q = 821/1301
+q = 831/1301
+q = 841/1301
+q = 851/1301
+q = 861/1301
+q = 871/1301
+q = 881/1301
+q = 891/1301
+q = 901/1301
+q = 911/1301
+q = 921/1301
+q = 931/1301
+q = 941/1301
+q = 951/1301
+q = 961/1301
+q = 971/1301
+q = 981/1301
+q = 991/1301
+q = 1001/1301
+q = 1011/1301
+q = 1021/1301
+q = 1031/1301
+q = 1041/1301
+q = 1051/1301
+q = 1061/1301
+q = 1071/1301
+q = 1081/1301
+q = 1091/1301
+q = 1101/1301
+q = 1111/1301
+q = 1121/1301
+q = 1131/1301
+q = 1141/1301
+q = 1151/1301
+q = 1161/1301
+q = 1171/1301
+q = 1181/1301
+q = 1191/1301
+q = 1201/1301
+q = 1211/1301
+q = 1221/1301
+q = 1231/1301
+q = 1241/1301
+q = 1251/1301
+q = 1261/1301
+q = 1271/1301
+q = 1281/1301
+q = 1291/1301
+q = 1301/1301
+Elapsed time is 1.410070 seconds.
+Saved Bloch data in file ./Wannier_data/Bloch_data/UniqueName.mat
+Minimising the Wannier spread of the Bloch bands, treating each as isolated...
+Minimising omegaD for Bloch band 1
+Iteration = 0, omegaD = 12.41
+Iteration = 100, omegaD = 0.8813
+Iteration = 200, omegaD = 0.7236
+Iteration = 300, omegaD = 0.6926
+Iteration = 400, omegaD = 0.679
+Iteration = 500, omegaD = 0.6708
+Iteration = 600, omegaD = 0.6651
+Iteration = 700, omegaD = 0.6608
+Iteration = 800, omegaD = 0.6573
+Iteration = 900, omegaD = 0.6545
+Iteration = 1000, omegaD = 0.6521
+The total no. of wannier90 iterations is 1000
+Minimising omegaD for Bloch band 2
+Iteration = 0, omegaD = 10.86
+Iteration = 100, omegaD = 1.231
+Iteration = 200, omegaD = 0.9866
+Iteration = 300, omegaD = 0.9022
+Iteration = 400, omegaD = 0.8544
+Iteration = 500, omegaD = 0.8219
+Iteration = 600, omegaD = 0.7979
+Iteration = 700, omegaD = 0.7791
+Iteration = 800, omegaD = 0.7639
+Iteration = 900, omegaD = 0.7513
+Iteration = 1000, omegaD = 0.7407
+The total no. of wannier90 iterations is 1000
+Minimising omegaD for Bloch band 3
+Iteration = 0, omegaD = 12.2
+Iteration = 100, omegaD = 1.817
+Iteration = 200, omegaD = 1.505
+Iteration = 300, omegaD = 1.364
+Iteration = 400, omegaD = 1.283
+Iteration = 500, omegaD = 1.23
+Iteration = 600, omegaD = 1.191
+Iteration = 700, omegaD = 1.161
+Iteration = 800, omegaD = 1.137
+Iteration = 900, omegaD = 1.116
+Iteration = 1000, omegaD = 1.099
+The total no. of wannier90 iterations is 1000
+Minimising omegaD for Bloch band 4
+Iteration = 0, omegaD = 16.17
+Iteration = 100, omegaD = 2.575
+Iteration = 200, omegaD = 2.147
+Iteration = 300, omegaD = 2
+Iteration = 400, omegaD = 1.927
+Iteration = 500, omegaD = 1.883
+Iteration = 600, omegaD = 1.855
+Iteration = 700, omegaD = 1.835
+Iteration = 800, omegaD = 1.821
+Iteration = 900, omegaD = 1.811
+Iteration = 1000, omegaD = 1.803
+The total no. of wannier90 iterations is 1000
+Elapsed time is 2.068980 seconds.
+Saved isolated band Wannier data in file ./Wannier_data/Isolated_data/UniqueName.mat
+Using the Souza et al. algorithm to reduce the contribution to omega_OD from each group of bands...
+Band group 1: optimally extacting a single band...
+n = 1/1: iteration = 0, omegaI = 7.8695
+n = 1/1: iteration 10, omegaI = 1.32798
+n = 1/1: iteration 20, omegaI = 1.56672
+n = 1/1: iteration 30, omegaI = 1.79113
+n = 1/1: iteration 40, omegaI = 1.99546
+n = 1/1: iteration 50, omegaI = 2.1931
+n = 1/1: iteration 60, omegaI = 2.38534
+n = 1/1: iteration 70, omegaI = 2.5724
+n = 1/1: iteration 80, omegaI = 2.78184
+n = 1/1: iteration 90, omegaI = 3.01379
+n = 1/1: iteration 100, omegaI = 3.21928
+n = 1/1: iteration 110, omegaI = 3.40368
+n = 1/1: iteration 120, omegaI = 3.56972
+n = 1/1: iteration 130, omegaI = 3.71939
+n = 1/1: iteration 140, omegaI = 3.85439
+n = 1/1: iteration 150, omegaI = 3.97634
+n = 1/1: iteration 160, omegaI = 4.08726
+n = 1/1: iteration 170, omegaI = 4.19464
+n = 1/1: iteration 180, omegaI = 4.32128
+n = 1/1: iteration 190, omegaI = 4.42301
+n = 1/1: iteration 200, omegaI = 4.50994
+n = 1/1: iteration 210, omegaI = 4.58499
+n = 1/1: iteration 220, omegaI = 4.64944
+n = 1/1: iteration 230, omegaI = 4.70423
+n = 1/1: iteration 240, omegaI = 4.75013
+n = 1/1: iteration 250, omegaI = 4.78785
+n = 1/1: iteration 260, omegaI = 4.818
+n = 1/1: iteration 270, omegaI = 4.84116
+n = 1/1: iteration 280, omegaI = 4.85783
+n = 1/1: iteration 290, omegaI = 4.86847
+n = 1/1: iteration 300, omegaI = 4.87351
+n = 1/1: iteration 310, omegaI = 4.87331
+n = 1/1: iteration 320, omegaI = 4.86822
+n = 1/1: iteration 330, omegaI = 4.85855
+n = 1/1: iteration 340, omegaI = 4.84456
+n = 1/1: iteration 350, omegaI = 4.82653
+n = 1/1: iteration 360, omegaI = 4.80466
+n = 1/1: iteration 370, omegaI = 4.7792
+n = 1/1: iteration 380, omegaI = 4.75032
+n = 1/1: iteration 390, omegaI = 4.71823
+n = 1/1: iteration 400, omegaI = 4.68309
+n = 1/1: iteration 410, omegaI = 4.64508
+n = 1/1: iteration 420, omegaI = 4.60435
+n = 1/1: iteration 430, omegaI = 4.56107
+n = 1/1: iteration 440, omegaI = 4.51538
+n = 1/1: iteration 450, omegaI = 4.46743
+n = 1/1: iteration 460, omegaI = 4.41736
+n = 1/1: iteration 470, omegaI = 4.3653
+n = 1/1: iteration 480, omegaI = 4.31139
+n = 1/1: iteration 490, omegaI = 4.25576
+n = 1/1: iteration 500, omegaI = 4.19854
+n = 1/1: iteration 510, omegaI = 4.13984
+n = 1/1: iteration 520, omegaI = 4.0798
+n = 1/1: iteration 530, omegaI = 4.01854
+n = 1/1: iteration 540, omegaI = 3.95616
+n = 1/1: iteration 550, omegaI = 3.89278
+n = 1/1: iteration 560, omegaI = 3.82852
+n = 1/1: iteration 570, omegaI = 3.76347
+n = 1/1: iteration 580, omegaI = 3.69775
+n = 1/1: iteration 590, omegaI = 3.63145
+n = 1/1: iteration 600, omegaI = 3.56467
+n = 1/1: iteration 610, omegaI = 3.49752
+n = 1/1: iteration 620, omegaI = 3.43007
+n = 1/1: iteration 630, omegaI = 3.36243
+n = 1/1: iteration 640, omegaI = 3.29467
+n = 1/1: iteration 650, omegaI = 3.22688
+n = 1/1: iteration 660, omegaI = 3.15914
+n = 1/1: iteration 670, omegaI = 3.09152
+n = 1/1: iteration 680, omegaI = 3.0241
+n = 1/1: iteration 690, omegaI = 2.95696
+n = 1/1: iteration 700, omegaI = 2.89014
+n = 1/1: iteration 710, omegaI = 2.82373
+n = 1/1: iteration 720, omegaI = 2.75777
+n = 1/1: iteration 730, omegaI = 2.69234
+n = 1/1: iteration 740, omegaI = 2.62747
+n = 1/1: iteration 750, omegaI = 2.56322
+n = 1/1: iteration 760, omegaI = 2.49965
+n = 1/1: iteration 770, omegaI = 2.43678
+n = 1/1: iteration 780, omegaI = 2.37468
+n = 1/1: iteration 790, omegaI = 2.31336
+n = 1/1: iteration 800, omegaI = 2.25288
+n = 1/1: iteration 810, omegaI = 2.19326
+n = 1/1: iteration 820, omegaI = 2.13454
+n = 1/1: iteration 830, omegaI = 2.07673
+n = 1/1: iteration 840, omegaI = 2.01987
+n = 1/1: iteration 850, omegaI = 1.96397
+n = 1/1: iteration 860, omegaI = 1.90906
+n = 1/1: iteration 870, omegaI = 1.85515
+n = 1/1: iteration 880, omegaI = 1.80226
+n = 1/1: iteration 890, omegaI = 1.7504
+n = 1/1: iteration 900, omegaI = 1.69958
+n = 1/1: iteration 910, omegaI = 1.64981
+n = 1/1: iteration 920, omegaI = 1.60108
+n = 1/1: iteration 930, omegaI = 1.55342
+n = 1/1: iteration 940, omegaI = 1.50681
+n = 1/1: iteration 950, omegaI = 1.46126
+n = 1/1: iteration 960, omegaI = 1.41677
+n = 1/1: iteration 970, omegaI = 1.37333
+n = 1/1: iteration 980, omegaI = 1.33094
+n = 1/1: iteration 990, omegaI = 1.2896
+n = 1/1: iteration 1000, omegaI = 1.24929
+Band group 2: optimally extacting a single band...
+n = 1/1: iteration = 0, omegaI = 8.22221
+n = 1/1: iteration 10, omegaI = 3.92633
+n = 1/1: iteration 20, omegaI = 3.91067
+n = 1/1: iteration 30, omegaI = 3.87323
+n = 1/1: iteration 40, omegaI = 3.79915
+n = 1/1: iteration 50, omegaI = 3.72818
+n = 1/1: iteration 60, omegaI = 3.67037
+n = 1/1: iteration 70, omegaI = 3.61473
+n = 1/1: iteration 80, omegaI = 3.53705
+n = 1/1: iteration 90, omegaI = 3.48667
+n = 1/1: iteration 100, omegaI = 3.46063
+n = 1/1: iteration 110, omegaI = 3.44535
+n = 1/1: iteration 120, omegaI = 3.43697
+n = 1/1: iteration 130, omegaI = 3.434
+n = 1/1: iteration 140, omegaI = 3.43552
+n = 1/1: iteration 150, omegaI = 3.44072
+n = 1/1: iteration 160, omegaI = 3.44873
+n = 1/1: iteration 170, omegaI = 3.45857
+n = 1/1: iteration 180, omegaI = 3.46927
+n = 1/1: iteration 190, omegaI = 3.47988
+n = 1/1: iteration 200, omegaI = 3.48952
+n = 1/1: iteration 210, omegaI = 3.49741
+n = 1/1: iteration 220, omegaI = 3.50291
+n = 1/1: iteration 230, omegaI = 3.50549
+n = 1/1: iteration 240, omegaI = 3.50474
+n = 1/1: iteration 250, omegaI = 3.50036
+n = 1/1: iteration 260, omegaI = 3.49214
+n = 1/1: iteration 270, omegaI = 3.47995
+n = 1/1: iteration 280, omegaI = 3.4637
+n = 1/1: iteration 290, omegaI = 3.44339
+n = 1/1: iteration 300, omegaI = 3.41906
+n = 1/1: iteration 310, omegaI = 3.39082
+n = 1/1: iteration 320, omegaI = 3.35886
+n = 1/1: iteration 330, omegaI = 3.32343
+n = 1/1: iteration 340, omegaI = 3.28487
+n = 1/1: iteration 350, omegaI = 3.24358
+n = 1/1: iteration 360, omegaI = 3.20005
+n = 1/1: iteration 370, omegaI = 3.1548
+n = 1/1: iteration 380, omegaI = 3.10838
+n = 1/1: iteration 390, omegaI = 3.06135
+n = 1/1: iteration 400, omegaI = 3.01425
+n = 1/1: iteration 410, omegaI = 2.96758
+n = 1/1: iteration 420, omegaI = 2.92179
+n = 1/1: iteration 430, omegaI = 2.87726
+n = 1/1: iteration 440, omegaI = 2.8343
+n = 1/1: iteration 450, omegaI = 2.79317
+n = 1/1: iteration 460, omegaI = 2.75406
+n = 1/1: iteration 470, omegaI = 2.71709
+n = 1/1: iteration 480, omegaI = 2.68235
+n = 1/1: iteration 490, omegaI = 2.64987
+n = 1/1: iteration 500, omegaI = 2.61967
+n = 1/1: iteration 510, omegaI = 2.59172
+n = 1/1: iteration 520, omegaI = 2.56598
+n = 1/1: iteration 530, omegaI = 2.54238
+n = 1/1: iteration 540, omegaI = 2.52086
+n = 1/1: iteration 550, omegaI = 2.50134
+n = 1/1: iteration 560, omegaI = 2.48374
+n = 1/1: iteration 570, omegaI = 2.46796
+n = 1/1: iteration 580, omegaI = 2.45393
+n = 1/1: iteration 590, omegaI = 2.44154
+n = 1/1: iteration 600, omegaI = 2.43072
+n = 1/1: iteration 610, omegaI = 2.42137
+n = 1/1: iteration 620, omegaI = 2.41341
+n = 1/1: iteration 630, omegaI = 2.40677
+n = 1/1: iteration 640, omegaI = 2.40136
+n = 1/1: iteration 650, omegaI = 2.39711
+n = 1/1: iteration 660, omegaI = 2.39394
+n = 1/1: iteration 670, omegaI = 2.39179
+n = 1/1: iteration 680, omegaI = 2.39059
+n = 1/1: iteration 690, omegaI = 2.39028
+n = 1/1: iteration 700, omegaI = 2.39079
+n = 1/1: iteration 710, omegaI = 2.39206
+n = 1/1: iteration 720, omegaI = 2.39405
+n = 1/1: iteration 730, omegaI = 2.39671
+n = 1/1: iteration 740, omegaI = 2.39997
+n = 1/1: iteration 750, omegaI = 2.4038
+n = 1/1: iteration 760, omegaI = 2.40815
+n = 1/1: iteration 770, omegaI = 2.41299
+n = 1/1: iteration 780, omegaI = 2.41826
+n = 1/1: iteration 790, omegaI = 2.42394
+n = 1/1: iteration 800, omegaI = 2.42998
+n = 1/1: iteration 810, omegaI = 2.43636
+n = 1/1: iteration 820, omegaI = 2.44305
+n = 1/1: iteration 830, omegaI = 2.45001
+n = 1/1: iteration 840, omegaI = 2.45722
+n = 1/1: iteration 850, omegaI = 2.46466
+n = 1/1: iteration 860, omegaI = 2.47229
+n = 1/1: iteration 870, omegaI = 2.4801
+n = 1/1: iteration 880, omegaI = 2.48807
+n = 1/1: iteration 890, omegaI = 2.49617
+n = 1/1: iteration 900, omegaI = 2.50439
+n = 1/1: iteration 910, omegaI = 2.5127
+n = 1/1: iteration 920, omegaI = 2.52111
+n = 1/1: iteration 930, omegaI = 2.52958
+n = 1/1: iteration 940, omegaI = 2.5381
+n = 1/1: iteration 950, omegaI = 2.54667
+n = 1/1: iteration 960, omegaI = 2.55527
+n = 1/1: iteration 970, omegaI = 2.56388
+n = 1/1: iteration 980, omegaI = 2.57251
+n = 1/1: iteration 990, omegaI = 2.58113
+n = 1/1: iteration 1000, omegaI = 2.58974
+Elapsed time is 36.557996 seconds.
+Minimising the Wannier spread of the Bloch bands, treating each as isolated...
+Minimising omegaD for Bloch band 1
+Iteration = 0, omegaD = 0.000118
+Iteration = 100, omegaD = 0.0001149
+Iteration = 200, omegaD = 0.0001143
+Iteration = 300, omegaD = 0.0001138
+Iteration = 400, omegaD = 0.0001134
+Iteration = 500, omegaD = 0.0001131
+Iteration = 600, omegaD = 0.0001128
+Iteration = 700, omegaD = 0.0001126
+Iteration = 800, omegaD = 0.0001124
+Iteration = 900, omegaD = 0.0001122
+Iteration = 1000, omegaD = 0.0001121
+The total no. of wannier90 iterations is 1000
+Minimising omegaD for Bloch band 2
+Iteration = 0, omegaD = 0.2223
+Iteration = 100, omegaD = 0.03284
+Iteration = 200, omegaD = 0.02347
+Iteration = 300, omegaD = 0.01896
+Iteration = 400, omegaD = 0.01606
+Iteration = 500, omegaD = 0.01396
+Iteration = 600, omegaD = 0.01232
+Iteration = 700, omegaD = 0.011
+Iteration = 800, omegaD = 0.009891
+Iteration = 900, omegaD = 0.008948
+Iteration = 1000, omegaD = 0.008131
+The total no. of wannier90 iterations is 1000
+Minimising omegaD for Bloch band 3
+Iteration = 0, omegaD = 0.1186
+Iteration = 100, omegaD = 0.02584
+Iteration = 200, omegaD = 0.01948
+Iteration = 300, omegaD = 0.0172
+Iteration = 400, omegaD = 0.01602
+Iteration = 500, omegaD = 0.01529
+Iteration = 600, omegaD = 0.01481
+Iteration = 700, omegaD = 0.01446
+Iteration = 800, omegaD = 0.0142
+Iteration = 900, omegaD = 0.014
+Iteration = 1000, omegaD = 0.01385
+The total no. of wannier90 iterations is 1000
+Minimising omegaD for Bloch band 4
+Iteration = 0, omegaD = 6.79
+Iteration = 100, omegaD = 1.447
+Iteration = 200, omegaD = 1.139
+Iteration = 300, omegaD = 1.003
+Iteration = 400, omegaD = 0.9329
+Iteration = 500, omegaD = 0.8943
+Iteration = 600, omegaD = 0.8713
+Iteration = 700, omegaD = 0.8566
+Iteration = 800, omegaD = 0.8466
+Iteration = 900, omegaD = 0.8394
+Iteration = 1000, omegaD = 0.8339
+The total no. of wannier90 iterations is 1000
+Elapsed time is 2.066635 seconds.
+Minimising the Wannier spread of each composite group...
+Band group 1: minimising the gauge-dependent part of the spread \tilde{omega} via steepest-descent...
+Iteration = 0, omegaOD = 2.48, omegaD = 0.008243
+Iteration = 10, omegaOD = 0.05772, omegaD = 0.008242
+Iteration = 20, omegaOD = 0.02307, omegaD = 0.00816
+Iteration = 30, omegaOD = 0.02245, omegaD = 0.008079
+Iteration = 40, omegaOD = 0.02226, omegaD = 0.007999
+Iteration = 50, omegaOD = 0.02208, omegaD = 0.007921
+Iteration = 60, omegaOD = 0.02191, omegaD = 0.007844
+Iteration = 70, omegaOD = 0.02176, omegaD = 0.007767
+Iteration = 80, omegaOD = 0.02161, omegaD = 0.007692
+Iteration = 90, omegaOD = 0.02146, omegaD = 0.007619
+Iteration = 100, omegaOD = 0.02132, omegaD = 0.007546
+Iteration = 110, omegaOD = 0.02119, omegaD = 0.007474
+Iteration = 120, omegaOD = 0.02105, omegaD = 0.007403
+Iteration = 130, omegaOD = 0.02093, omegaD = 0.007333
+Iteration = 140, omegaOD = 0.0208, omegaD = 0.007264
+Iteration = 150, omegaOD = 0.02068, omegaD = 0.007196
+Iteration = 160, omegaOD = 0.02056, omegaD = 0.007129
+Iteration = 170, omegaOD = 0.02045, omegaD = 0.007063
+Iteration = 180, omegaOD = 0.02034, omegaD = 0.006998
+Iteration = 190, omegaOD = 0.02023, omegaD = 0.006934
+Iteration = 200, omegaOD = 0.02012, omegaD = 0.00687
+Iteration = 210, omegaOD = 0.02001, omegaD = 0.006807
+Iteration = 220, omegaOD = 0.01991, omegaD = 0.006745
+Iteration = 230, omegaOD = 0.01981, omegaD = 0.006684
+Iteration = 240, omegaOD = 0.0197, omegaD = 0.006623
+Iteration = 250, omegaOD = 0.01961, omegaD = 0.006564
+Iteration = 260, omegaOD = 0.01951, omegaD = 0.006505
+Iteration = 270, omegaOD = 0.01941, omegaD = 0.006446
+Iteration = 280, omegaOD = 0.01932, omegaD = 0.006389
+Iteration = 290, omegaOD = 0.01922, omegaD = 0.006332
+Iteration = 300, omegaOD = 0.01913, omegaD = 0.006276
+Iteration = 310, omegaOD = 0.01904, omegaD = 0.00622
+Iteration = 320, omegaOD = 0.01895, omegaD = 0.006165
+Iteration = 330, omegaOD = 0.01886, omegaD = 0.006111
+Iteration = 340, omegaOD = 0.01877, omegaD = 0.006057
+Iteration = 350, omegaOD = 0.01869, omegaD = 0.006004
+Iteration = 360, omegaOD = 0.0186, omegaD = 0.005952
+Iteration = 370, omegaOD = 0.01852, omegaD = 0.0059
+Iteration = 380, omegaOD = 0.01843, omegaD = 0.005848
+Iteration = 390, omegaOD = 0.01835, omegaD = 0.005798
+Iteration = 400, omegaOD = 0.01827, omegaD = 0.005748
+Iteration = 410, omegaOD = 0.01819, omegaD = 0.005698
+Iteration = 420, omegaOD = 0.01811, omegaD = 0.005649
+Iteration = 430, omegaOD = 0.01803, omegaD = 0.0056
+Iteration = 440, omegaOD = 0.01795, omegaD = 0.005552
+Iteration = 450, omegaOD = 0.01787, omegaD = 0.005505
+Iteration = 460, omegaOD = 0.01779, omegaD = 0.005458
+Iteration = 470, omegaOD = 0.01772, omegaD = 0.005411
+Iteration = 480, omegaOD = 0.01764, omegaD = 0.005365
+Iteration = 490, omegaOD = 0.01757, omegaD = 0.00532
+Iteration = 500, omegaOD = 0.01749, omegaD = 0.005275
+Iteration = 510, omegaOD = 0.01742, omegaD = 0.00523
+Iteration = 520, omegaOD = 0.01734, omegaD = 0.005186
+Iteration = 530, omegaOD = 0.01727, omegaD = 0.005142
+Iteration = 540, omegaOD = 0.0172, omegaD = 0.005099
+Iteration = 550, omegaOD = 0.01713, omegaD = 0.005056
+Iteration = 560, omegaOD = 0.01706, omegaD = 0.005014
+Iteration = 570, omegaOD = 0.01699, omegaD = 0.004972
+Iteration = 580, omegaOD = 0.01692, omegaD = 0.00493
+Iteration = 590, omegaOD = 0.01685, omegaD = 0.004889
+Iteration = 600, omegaOD = 0.01678, omegaD = 0.004848
+Iteration = 610, omegaOD = 0.01671, omegaD = 0.004808
+Iteration = 620, omegaOD = 0.01664, omegaD = 0.004768
+Iteration = 630, omegaOD = 0.01657, omegaD = 0.004729
+Iteration = 640, omegaOD = 0.01651, omegaD = 0.004689
+Iteration = 650, omegaOD = 0.01644, omegaD = 0.004651
+Iteration = 660, omegaOD = 0.01638, omegaD = 0.004612
+Iteration = 670, omegaOD = 0.01631, omegaD = 0.004574
+Iteration = 680, omegaOD = 0.01625, omegaD = 0.004537
+Iteration = 690, omegaOD = 0.01618, omegaD = 0.004499
+Iteration = 700, omegaOD = 0.01612, omegaD = 0.004462
+Iteration = 710, omegaOD = 0.01605, omegaD = 0.004426
+Iteration = 720, omegaOD = 0.01599, omegaD = 0.00439
+Iteration = 730, omegaOD = 0.01593, omegaD = 0.004354
+Iteration = 740, omegaOD = 0.01586, omegaD = 0.004318
+Iteration = 750, omegaOD = 0.0158, omegaD = 0.004283
+Iteration = 760, omegaOD = 0.01574, omegaD = 0.004248
+Iteration = 770, omegaOD = 0.01568, omegaD = 0.004214
+Iteration = 780, omegaOD = 0.01562, omegaD = 0.004179
+Iteration = 790, omegaOD = 0.01556, omegaD = 0.004145
+Iteration = 800, omegaOD = 0.0155, omegaD = 0.004112
+Iteration = 810, omegaOD = 0.01544, omegaD = 0.004079
+Iteration = 820, omegaOD = 0.01538, omegaD = 0.004046
+Iteration = 830, omegaOD = 0.01532, omegaD = 0.004013
+Iteration = 840, omegaOD = 0.01526, omegaD = 0.00398
+Iteration = 850, omegaOD = 0.0152, omegaD = 0.003948
+Iteration = 860, omegaOD = 0.01514, omegaD = 0.003917
+Iteration = 870, omegaOD = 0.01509, omegaD = 0.003885
+Iteration = 880, omegaOD = 0.01503, omegaD = 0.003854
+Iteration = 890, omegaOD = 0.01497, omegaD = 0.003823
+Iteration = 900, omegaOD = 0.01491, omegaD = 0.003792
+Iteration = 910, omegaOD = 0.01486, omegaD = 0.003762
+Iteration = 920, omegaOD = 0.0148, omegaD = 0.003732
+Iteration = 930, omegaOD = 0.01474, omegaD = 0.003702
+Iteration = 940, omegaOD = 0.01469, omegaD = 0.003672
+Iteration = 950, omegaOD = 0.01463, omegaD = 0.003643
+Iteration = 960, omegaOD = 0.01458, omegaD = 0.003614
+Iteration = 970, omegaOD = 0.01452, omegaD = 0.003585
+Iteration = 980, omegaOD = 0.01447, omegaD = 0.003556
+Iteration = 990, omegaOD = 0.01441, omegaD = 0.003528
+Iteration = 1000, omegaOD = 0.01436, omegaD = 0.0035
+The total no. of wannier90 iterations is 1000
+Band group 2: minimising the gauge-dependent part of the spread \tilde{omega} via steepest-descent...
+Iteration = 0, omegaOD = 5.052, omegaD = 0.8478
+Iteration = 10, omegaOD = 0.5344, omegaD = 0.9375
+Iteration = 20, omegaOD = 0.2214, omegaD = 0.8357
+Iteration = 30, omegaOD = 0.1775, omegaD = 0.7626
+Iteration = 40, omegaOD = 0.1618, omegaD = 0.7582
+Iteration = 50, omegaOD = 0.1531, omegaD = 0.7339
+Iteration = 60, omegaOD = 0.1481, omegaD = 0.7292
+Iteration = 70, omegaOD = 0.1456, omegaD = 0.7189
+Iteration = 80, omegaOD = 0.1437, omegaD = 0.7158
+Iteration = 90, omegaOD = 0.1419, omegaD = 0.7144
+Iteration = 100, omegaOD = 0.1398, omegaD = 0.709
+Iteration = 110, omegaOD = 0.1389, omegaD = 0.6998
+Iteration = 120, omegaOD = 0.1385, omegaD = 0.6988
+Iteration = 130, omegaOD = 0.1378, omegaD = 0.6969
+Iteration = 140, omegaOD = 0.137, omegaD = 0.6956
+Iteration = 150, omegaOD = 0.1364, omegaD = 0.6904
+Iteration = 160, omegaOD = 0.136, omegaD = 0.6875
+Iteration = 170, omegaOD = 0.1359, omegaD = 0.6847
+Iteration = 180, omegaOD = 0.1353, omegaD = 0.6827
+Iteration = 190, omegaOD = 0.1349, omegaD = 0.6799
+Iteration = 200, omegaOD = 0.1347, omegaD = 0.6774
+Iteration = 210, omegaOD = 0.1347, omegaD = 0.6751
+Iteration = 220, omegaOD = 0.1342, omegaD = 0.6727
+Iteration = 230, omegaOD = 0.134, omegaD = 0.6707
+Iteration = 240, omegaOD = 0.1339, omegaD = 0.6686
+Iteration = 250, omegaOD = 0.1337, omegaD = 0.6669
+Iteration = 260, omegaOD = 0.1335, omegaD = 0.6647
+Iteration = 270, omegaOD = 0.1334, omegaD = 0.6625
+Iteration = 280, omegaOD = 0.1334, omegaD = 0.6605
+Iteration = 290, omegaOD = 0.1333, omegaD = 0.6587
+Iteration = 300, omegaOD = 0.1332, omegaD = 0.6571
+Iteration = 310, omegaOD = 0.1332, omegaD = 0.6554
+Iteration = 320, omegaOD = 0.1333, omegaD = 0.6539
+Iteration = 330, omegaOD = 0.133, omegaD = 0.652
+Iteration = 340, omegaOD = 0.133, omegaD = 0.6501
+Iteration = 350, omegaOD = 0.133, omegaD = 0.6485
+Iteration = 360, omegaOD = 0.133, omegaD = 0.647
+Iteration = 370, omegaOD = 0.133, omegaD = 0.6456
+Iteration = 380, omegaOD = 0.133, omegaD = 0.6441
+Iteration = 390, omegaOD = 0.1332, omegaD = 0.6427
+Iteration = 400, omegaOD = 0.133, omegaD = 0.6409
+Iteration = 410, omegaOD = 0.133, omegaD = 0.6393
+Iteration = 420, omegaOD = 0.1331, omegaD = 0.638
+Iteration = 430, omegaOD = 0.1331, omegaD = 0.6367
+Iteration = 440, omegaOD = 0.1331, omegaD = 0.6353
+Iteration = 450, omegaOD = 0.1331, omegaD = 0.6338
+Iteration = 460, omegaOD = 0.1333, omegaD = 0.6323
+Iteration = 470, omegaOD = 0.1333, omegaD = 0.631
+Iteration = 480, omegaOD = 0.1333, omegaD = 0.6298
+Iteration = 490, omegaOD = 0.1334, omegaD = 0.6285
+Iteration = 500, omegaOD = 0.1334, omegaD = 0.6272
+Iteration = 510, omegaOD = 0.1335, omegaD = 0.6258
+Iteration = 520, omegaOD = 0.1336, omegaD = 0.6245
+Iteration = 530, omegaOD = 0.1337, omegaD = 0.6233
+Iteration = 540, omegaOD = 0.1338, omegaD = 0.6222
+Iteration = 550, omegaOD = 0.1338, omegaD = 0.6209
+Iteration = 560, omegaOD = 0.134, omegaD = 0.6196
+Iteration = 570, omegaOD = 0.1341, omegaD = 0.6184
+Iteration = 580, omegaOD = 0.1342, omegaD = 0.6172
+Iteration = 590, omegaOD = 0.1343, omegaD = 0.616
+Iteration = 600, omegaOD = 0.1344, omegaD = 0.6147
+Iteration = 610, omegaOD = 0.1345, omegaD = 0.6135
+Iteration = 620, omegaOD = 0.1346, omegaD = 0.6123
+Iteration = 630, omegaOD = 0.135, omegaD = 0.6116
+Iteration = 640, omegaOD = 0.1348, omegaD = 0.6101
+Iteration = 650, omegaOD = 0.135, omegaD = 0.609
+Iteration = 660, omegaOD = 0.1351, omegaD = 0.608
+Iteration = 670, omegaOD = 0.1353, omegaD = 0.607
+Iteration = 680, omegaOD = 0.1354, omegaD = 0.6059
+Iteration = 690, omegaOD = 0.1356, omegaD = 0.6046
+Iteration = 700, omegaOD = 0.1359, omegaD = 0.6033
+Iteration = 710, omegaOD = 0.1359, omegaD = 0.602
+Iteration = 720, omegaOD = 0.1361, omegaD = 0.6009
+Iteration = 730, omegaOD = 0.1363, omegaD = 0.5997
+Iteration = 740, omegaOD = 0.1363, omegaD = 0.5986
+Iteration = 750, omegaOD = 0.1365, omegaD = 0.5975
+Iteration = 760, omegaOD = 0.1367, omegaD = 0.5964
+Iteration = 770, omegaOD = 0.1369, omegaD = 0.5953
+Iteration = 780, omegaOD = 0.1371, omegaD = 0.5943
+Iteration = 790, omegaOD = 0.1373, omegaD = 0.5932
+Iteration = 800, omegaOD = 0.1378, omegaD = 0.5925
+Iteration = 810, omegaOD = 0.1379, omegaD = 0.5911
+Iteration = 820, omegaOD = 0.1382, omegaD = 0.5902
+Iteration = 830, omegaOD = 0.1381, omegaD = 0.5918
+Iteration = 840, omegaOD = 0.1381, omegaD = 0.5882
+Iteration = 850, omegaOD = 0.1384, omegaD = 0.5869
+Iteration = 860, omegaOD = 0.1387, omegaD = 0.5858
+Iteration = 870, omegaOD = 0.1391, omegaD = 0.5847
+Iteration = 880, omegaOD = 0.1395, omegaD = 0.5838
+Iteration = 890, omegaOD = 0.1398, omegaD = 0.583
+Iteration = 900, omegaOD = 0.1399, omegaD = 0.5847
+Iteration = 910, omegaOD = 0.1398, omegaD = 0.5812
+Iteration = 920, omegaOD = 0.1401, omegaD = 0.5796
+Iteration = 930, omegaOD = 0.1405, omegaD = 0.5785
+Iteration = 940, omegaOD = 0.1408, omegaD = 0.5774
+Iteration = 950, omegaOD = 0.1412, omegaD = 0.5763
+Iteration = 960, omegaOD = 0.1416, omegaD = 0.5753
+Iteration = 970, omegaOD = 0.142, omegaD = 0.5743
+Iteration = 980, omegaOD = 0.1423, omegaD = 0.5736
+Iteration = 990, omegaOD = 0.1425, omegaD = 0.5743
+Iteration = 1000, omegaOD = 0.1428, omegaD = 0.5731
+The total no. of wannier90 iterations is 1000
+Elapsed time is 269.464479 seconds.
+Saved composite Wannier data in file ./Wannier_data/Composite_data/UniqueName.mat
+Calculating real space Wannier data...
+Elapsed time is 2.702166 seconds.
+Saved composite Wannier data in file ./Wannier_data/Composite_data/UniqueName.mat
+Calculating hopping matrix elements...
+Elapsed time is 0.009068 seconds.
+Calculating many-body interaction matrix elements...
+Elapsed time is 0.017388 seconds.
+Saved many-body data in file ./Wannier_data/Many_body_data/UniqueName.mat
+-------------------------------------------------
+MAXIMALLY LOCALISED GENERALISED WANNIER FUNCTIONS
+End of calculations
+-------------------------------------------------
+-------------------------------------------------
+MAXIMALLY LOCALISED GENERALISED WANNIER FUNCTIONS
+Plotting the potential and Wannier functions...
+-------------------------------------------------
+Calculating real space Wannier data...
+Elapsed time is 1.260846 seconds.

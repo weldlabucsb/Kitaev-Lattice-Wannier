@@ -26,26 +26,46 @@ pol_deg = [0,0,0,0];
 % th_deg = [0,90,180,270];
 % pol_deg = [0,0,0,0];
 plots = 1; %boolean to turn plots on or off
+
+%%%%%%%%%% Alternate lattice params here
+% A = [1,1,1,1];
+% ph_deg = [0, 0,250,60];
+% th_deg = [0,90,180,270];
+% pol_deg = [0,0,0,0];
+% plots = 1;
+%%%%%%%%%%%%
+
+%%%%%%%%%%%%% basis rotation %%%%%%%%%%%
+th_deg = th_deg-45;
+
+
 [waveAmplitudes,deltaKsUnitless,deltaPhis,maxAmp]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots);
-%square lattice params
+
+
+%Make lattice manually...
 if (0)
-    waveAmplitudes = [1,1];
-    deltaKsUnitless = [1 0;0 1];
+    %Since these are made negative later
+    waveAmplitudes = [-1/2,-1/2];
+    deltaKsUnitless = [1 1;1 -1];
     deltaPhis = [0 0];
     maxAmp = 2;
-    [X,Y] = meshgrid(-4:0.1:4,-4:0.1:4);
+    [X,Y] = meshgrid(0:0.1:2,0:0.1:2);
     totalFromCompSum = zeros(size(X));
     for ii = 1:length(waveAmplitudes)
-        compWaveMatrix = waveAmplitudes(ii)*cos(deltaKsUnitless(ii,1).*X + deltaKsUnitless(ii,2).*Y - deltaPhis(ii));
+        %note when using the unitless k vectors to plot in untiless x as a
+        %function of the lattice light wavelength need a 2pi factor
+        compWaveMatrix = waveAmplitudes(ii)*cos(deltaKsUnitless(ii,1).*X*2*pi + deltaKsUnitless(ii,2).*Y*2*pi - deltaPhis(ii));
         totalFromCompSum = totalFromCompSum + compWaveMatrix;
     end
+    maxAmp = max(max(totalFromCompSum))-min(min(totalFromCompSum));
     figure
     surf(X,Y,totalFromCompSum);
 end
+
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 5; %in Er!!
+potentialDepth = 1; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -58,7 +78,7 @@ waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %point where you would be happy with the accuracy in finding the
 %eigenvalues and vectors, but the KVectors could be arbitrarily large. In
 %this case they are not (<=2), but in principle they could be quite large.
-max_m = 7;
+max_m = 4;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:length(waveAmplitudes)
@@ -76,6 +96,7 @@ end
 %intensity
 Vcoeff = -Vcoeff;
 
+% keyboard;
 %% Range of Quasimomenta to use
 %now this is where things start to get different from the other code, given
 %that we are considering only certain values of the quasimomentum for
@@ -139,7 +160,7 @@ for kk = 1:num_bands
 end
 
 %bands to be caluclated. I think that we need 4 for the 4 sub-cell minima
-bands = [1 2 3 4];
+bands = [1 2];
 
 %% De-compactify the eigenvectors:
 %this is the eigenvector output from the eig function. Remember that we
@@ -170,6 +191,7 @@ R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 for ii = bands
     for jj = bands
+        disp(['ii is ' num2str(ii) ', jj is ' num2str(jj)])
         for kk = 1:qsize
             for ll = 1:qsize
                 for mm = 1:qsize
@@ -212,10 +234,10 @@ for ii = bands
                                             else
                                                 x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
                                                     .*(((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2)).*((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))...
-                                                    -m0*((exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1)));
+                                                    -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
                                                 y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
                                                     .*(((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)).*((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))...
-                                                    -m0*((exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1)));
+                                                    -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
                                             end
                                         end
                                     end
@@ -226,7 +248,7 @@ for ii = bands
                          y_element = y_element*(2*pi./L^2);
                         R1((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = x_element;
                         R2((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = y_element;
-                        toc
+%                         toc
                     end
                 end
             end
@@ -235,5 +257,15 @@ for ii = bands
     toc
 end
 toc
+
+e1 = eig(R1);
+e2 = eig(R2);
+figure;
+plot(sort(real(e1)));
+title('xoperator eigenvalues');
+figure;
+plot(sort(real(e2)));
+title('yoperator eigenvalues');
+% keyboard
 
 end

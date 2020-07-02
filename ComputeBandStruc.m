@@ -23,6 +23,14 @@ pol_deg = [0,0,0,0];
 % th_deg = [0,90,180,270];
 % pol_deg = [0,0,0,0];
 plots = 1; %boolean to turn plots on or off
+
+% A = [1,1,1,1];
+% ph_deg = [0, 0,250,60];
+% th_deg = [0,90,180,270];
+% pol_deg = [0,0,0,0];
+% plots = 1;
+
+
 [waveAmplitudes,deltaKsUnitless,deltaPhis,maxAmp]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots);
 %square lattice params
 if (0)
@@ -42,7 +50,7 @@ end
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 5; %in Er!!
+potentialDepth = 20; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -74,8 +82,7 @@ Vcoeff = -Vcoeff;
 %% Explicitly Create the Hamiltonian as a Matrix
 % this may look simple yet confusing. There is a bit going on here.
 % Hopefully the document can help explain
-
-qsize = 5;
+qsize = 15;
 %qusimomenta that you want
 zone_number = 1; %how many extended zones to plot
 [quasiX,quasiY] = meshgrid(linspace(-0.5*zone_number,0.5*zone_number,qsize),linspace(-0.5*zone_number,0.5*zone_number,qsize));
@@ -137,7 +144,7 @@ for kk = 1:num_bands
     zlabel(zlab, 'interpreter','latex');
 end
 
-
+keyboard
 %% Plot the bloch functions
 %The bloch functions are themselves a function of the quasimomentum, so
 %select a mometum point here to look at. 

@@ -11,11 +11,23 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLattic
         % but not implemented here.
         
     if (nargin < 1)
-        A = [1,1,1,1];
-        ph_deg = [0, 0,250,60];
-        th_deg = [0,90,180,270];
-        pol_deg = [0,0,0,0];
-        plots = 1;
+%         A = [1,1,1,1];
+%         ph_deg = [0, 0,250,60];
+%         th_deg = [0,90,180,270];
+%         pol_deg = [0,0,0,0];
+%         plots = 1;
+%           Deeper hopping well
+%             A = [1,1,0.6,0.5];
+%             ph_deg = [0, 0, 95, -80];
+%             th_deg = [0,90,180,270];
+%             pol_deg = [0,0,0,0];
+%             
+            %regular lattice
+            A = [1,1,0.6,0.5];
+            ph_deg = [0, 0, 90, -70];
+            th_deg = [0,90,180,270];
+            pol_deg = [0,0,0,0];
+            plots = 1; %boolean to turn plots on or off
     end
         
     close all
@@ -23,9 +35,9 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLattic
     %% Initialize Position Space Mesh and Time Mesh
     %units of lamba, the lattice light wavelength
     xMin = 0;
-    xMax = 1;  %units of lambda
+    xMax = 3;  %units of lambda
     yMin = 0;
-    yMax = 1;   %units of lambda
+    yMax = 3;   %units of lambda
     xStep = 0.01;
     yStep = 0.01;
     
