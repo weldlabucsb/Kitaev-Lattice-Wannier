@@ -258,10 +258,8 @@ for ii = bands
 end
 toc
 
-%% Diagonalize the Band Projected Position Operators.
-%Technically only one needs to be fully diagonalized first, since after we
-%do this we will only need to diagonalize the other one in a
-%semi-degenerate subspace of the first one
+max(R1-R1','all')
+max(
 e1 = eig(R1);
 e2 = eig(R2);
 figure;
