@@ -258,16 +258,28 @@ for ii = bands
 end
 toc
 
-max(R1-R1','all')
-max(
-e1 = eig(R1);
-e2 = eig(R2);
+%% Diagonalize the Band Projected Position Operators.
+%Technically only one needs to be fully diagonalized first, since after we
+%do this we will only need to diagonalize the other one in a
+%semi-degenerate subspace of the first one
+
+% e2 = eig(R2);
+% e1 = eig(R1);
+[V2,D2] = eig(R2);
+E2 = diag(D2);
 figure;
-plot(sort(real(e1)));
-title('xoperator eigenvalues');
-figure;
-plot(sort(real(e2)));
-title('yoperator eigenvalues');
+grouped_eigenvecs = zeros(1,L);
+grouped_eigenvals = zeros(length(V2(:,1)),L);
+for ii = 1:length(E2)
+    if (E2(ii) > -6.1) && (E2(ii) < -5.9)
+        
+    end
+end
+% plot(sort(real(e1)));
+% title('xoperator eigenvalues');
+% figure;
+% plot(sort(real(e2)));
+% title('yoperator eigenvalues');
 % keyboard
 
 end
