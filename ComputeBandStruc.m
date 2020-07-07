@@ -264,6 +264,7 @@ function [U] = bloch_func(weights,max_m,xmat,ymat)
 %site. Long story short we can just transpose the weights matrix to take
 %this into account
 [mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
+keyboard;
 U = zeros(length(xmat(:,1)),length(ymat(:,1)));
 for ii = 1:(2*max_m+1)
     for jj = 1:(2*max_m+1)

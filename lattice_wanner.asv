@@ -25,7 +25,7 @@ pol_deg = [0,0,0,0];
 % ph_deg = [0, 0,250,60];
 % th_deg = [0,90,180,270];
 % pol_deg = [0,0,0,0];
-plots = 1; %boolean to turn plots on or off
+plots = 0; %boolean to turn plots on or off
 
 %%%%%%%%%% Alternate lattice params here
 % A = [1,1,1,1];
@@ -268,18 +268,116 @@ toc
 [V2,D2] = eig(R2);
 E2 = diag(D2);
 figure;
-grouped_eigenvecs = zeros(1,L);
-grouped_eigenvals = zeros(length(V2(:,1)),L);
+grouped_eigenvals = zeros(1,L);
+grouped_eigenvecs = zeros(length(V2(:,1)),L);
+jj = 1;
 for ii = 1:length(E2)
     if (E2(ii) > -6.1) && (E2(ii) < -5.9)
-        
+        grouped_eigenvals(jj) = E2(ii);
+        grouped_eigenvecs(:,jj) = V2(:,ii);
+        jj = jj+1;
     end
 end
+jj %just a double check that a group of 5 came out. JJ should be 6
+realspace_points = 50;
+xrange = linspace(-5,5,realspace_points);
+yrange = linspace(-5,5,realspace_points);
+[X,Y] = meshgrid(xrange,yrange);
+wannier_func_realspace = zeros(realspace_points,realspace_points);
+
+%first let's get our collection of Bloch wave states
+U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
+
+
+
+
+
+
+
+%let's just do one of the eigenvalue/vectors in the group above
+% for ii = 1:length(grouped_eigenvecs(:,1))
+%     wannier_func_realspace = wannier_func_realspace + 
+% end
+
+% for ii = bands
+%     for jj = 1:qsize
+%         for kk = 1:qsize
+% %             keyboard;
+%             wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,1)...
+%                 .*bloch_wave(weightsMatrix(:,:,ii,jj,kk),max_m,X,Y,(max_qm+1-jj)./L,(max_qm+1-kk)./L,ii);
+%         end
+%     end
+% end
+
+
+
 % plot(sort(real(e1)));
 % title('xoperator eigenvalues');
 % figure;
 % plot(sort(real(e2)));
 % title('yoperator eigenvalues');
 % keyboard
+
+end
+
+function [U] = bloch_func(weights,max_m,xmat,ymat)
+%NOTE: we have to be a bit careful when using meshgrid here. Unfortunately
+%the A(i,j) matrix indexing convention conflicts with our traditional idea
+%of (x,y) pairs. For (i,j), i represents a vertical displacement, but for (x,y)
+%the first index represents horizontal displacement. If this isn't clear,
+%try testing a simple example of meshgrid, or check MATLAB documentation
+%site. Long story short we can just transpose the weights matrix to take
+%this into account
+[mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
+U = zeros(length(xmat(:,1)),length(ymat(:,1)));
+for ii = 1:(2*max_m+1)
+    for jj = 1:(2*max_m+1)
+        mx = mxMat(ii,jj);
+        my = myMat(ii,jj);
+        U = U + weights(jj,ii).*(exp(1i.*2.*pi.*mx.*xmat)).*(exp(1i.*2.*pi.*my.*ymat));
+    end
+end
+
+end
+
+function [U] = bloch_wave(eigvecs,max_m,xmat,ymat,quasiX,quasiY,bands)
+%Now the goal of this function is to actually return the eigenfunctions of
+%the Hamiltonian. The other ones are the bloch functions (that have the
+%periodicity of the lattice)
+
+%This is the momenta grid.
+[mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
+mLength = 2*max_m + 1;
+%Note that the first two indices are the real space representation of the
+%bloch waves. The next two indices are the quasimomenta. The final one is
+%the band index. I think that we should only need the first two, since we
+%have two minima in a single lattice cell
+U = zeros(length(xmat(:,1)),length(ymat(:,1)),length(bands),length(quasiX(:,1)),length(quasiY(:,1)));
+for kk = bands
+    %please see the note in the bloch function function about why this is
+    %weightsMatrix(jj,ii) as opposed to (ii,jj).
+    for ll = 1:length(quasiX(:,1))
+        for mm = 1:length(quasiY(:,1))
+            
+            weightsColumn  = eigvecs(:,kk,ll,mm);
+            weightsMatrix = zeros(mLength,mLength);
+            for ii = 1:mLength
+                for jj = 1:mLength
+                    weightsMatrix(ii,jj) = weightsColumn((mLength*(ii-1)+jj));
+                end
+            end
+            
+            for ii = 1:mLength
+                for jj = 1:mLength
+                    mx = mxMat(ii,jj);
+                    my = myMat(ii,jj);
+                    U(:,:,kk,ll,mm) = U(:,:,kk,ll,mm) +...
+                        weightsMatrix(jj,ii).*(exp(1i.*2.*pi.*(mx+quasiX(ll,mm)).*xmat)).*(exp(1i.*2.*pi.*(my+quasiY(ll,mm)).*ymat));
+                end
+            end
+        end
+    end
+    
+end
 
 end

@@ -268,17 +268,59 @@ toc
 [V2,D2] = eig(R2);
 E2 = diag(D2);
 figure;
-grouped_eigenvecs = zeros(1,L);
-grouped_eigenvals = zeros(length(V2(:,1)),L);
+grouped_eigenvals = zeros(1,L);
+grouped_eigenvecs = zeros(length(V2(:,1)),L);
 jj = 1;
 for ii = 1:length(E2)
     if (E2(ii) > -6.1) && (E2(ii) < -5.9)
-        grouped_eigenvecs(jj) = E2(ii);
-        grouped_eigenvals(:,jj) = V2(:,ii);
+        grouped_eigenvals(jj) = E2(ii);
+        grouped_eigenvecs(:,jj) = V2(:,ii);
         jj = jj+1;
     end
 end
-jj %just a double check that a group of 5 came out
+jj %just a double check that a group of 5 came out. JJ should be 6
+realspace_points = 50;
+xrange = linspace(-5,5,realspace_points);
+yrange = linspace(-5,5,realspace_points);
+[X,Y] = meshgrid(xrange,yrange);
+wannier_func_realspace = zeros(realspace_points,realspace_points);
+
+%first let's get our collection of Bloch wave states. Here U is a 5 dim
+%matrix, where the last three are the indices for the band, xquasimomentum
+%and y quasimomentum. 
+U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
+for ii = bands
+    for jj = 1:qsize
+        for kk = 1:qsize
+%             keyboard;
+            wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,1)...
+                .*U(:,:,ii,jj,kk);
+        end
+    end
+end
+
+keyboard;
+
+
+
+
+
+
+%let's just do one of the eigenvalue/vectors in the group above
+% for ii = 1:length(grouped_eigenvecs(:,1))
+%     wannier_func_realspace = wannier_func_realspace + 
+% end
+
+% for ii = bands
+%     for jj = 1:qsize
+%         for kk = 1:qsize
+% %             keyboard;
+%             wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,1)...
+%                 .*bloch_wave(weightsMatrix(:,:,ii,jj,kk),max_m,X,Y,(max_qm+1-jj)./L,(max_qm+1-kk)./L,ii);
+%         end
+%     end
+% end
+
 
 
 % plot(sort(real(e1)));
@@ -315,13 +357,13 @@ function [U] = bloch_wave(eigvecs,max_m,xmat,ymat,quasiX,quasiY,bands)
 %the Hamiltonian. The other ones are the bloch functions (that have the
 %periodicity of the lattice)
 
-%This is the grid of higher momenta in general.
+%This is the momenta grid.
 [mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
 mLength = 2*max_m + 1;
 %Note that the first two indices are the real space representation of the
 %bloch waves. The next two indices are the quasimomenta. The final one is
-%the band index. I think that we should only need the first four, since we
-%have four minima in a single lattice cell
+%the band index. I think that we should only need the first two, since we
+%have two minima in a single lattice cell
 U = zeros(length(xmat(:,1)),length(ymat(:,1)),length(bands),length(quasiX(:,1)),length(quasiY(:,1)));
 for kk = bands
     %please see the note in the bloch function function about why this is
