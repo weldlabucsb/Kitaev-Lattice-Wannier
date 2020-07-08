@@ -285,9 +285,33 @@ yrange = linspace(-5,5,realspace_points);
 [X,Y] = meshgrid(xrange,yrange);
 wannier_func_realspace = zeros(realspace_points,realspace_points);
 
-%first let's get our collection of Bloch wave states
+%first let's get our collection of Bloch wave states. Here U is a 5 dim
+%matrix, where the last three are the indices for the band, xquasimomentum
+%and y quasimomentum. 
 U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
+for ii = bands
+    for jj = 1:qsize
+        for kk = 1:qsize
+%             keyboard;
+            wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,3)...
+                .*U(:,:,ii,jj,kk);
+        end
+    end
+end
 
+figure
+surf(X,Y,real(wannier_func_realspace));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['\text{Re}(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex');
+figure
+surf(X,Y,imag(wannier_func_realspace));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['$\text{Im}(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex');
+keyboard;
 
 
 

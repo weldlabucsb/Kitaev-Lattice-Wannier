@@ -293,12 +293,24 @@ for ii = bands
     for jj = 1:qsize
         for kk = 1:qsize
 %             keyboard;
-            wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,1)...
+            wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,3)...
                 .*U(:,:,ii,jj,kk);
         end
     end
 end
 
+figure
+surf(X,Y,real(wannier_func_realspace));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['$Re(Wannier Func)$'];
+zlabel(zlab, 'interpreter','latex');
+figure
+surf(X,Y,imag(wannier_func_realspace));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['Im(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex');
 keyboard;
 
 
