@@ -303,16 +303,25 @@ figure
 surf(X,Y,real(wannier_func_realspace));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
-zlab = ['\text{Re}(Wannier Func)'];
+zlab = ['$Re(Wannier Func)$'];
 zlabel(zlab, 'interpreter','latex');
 figure
 surf(X,Y,imag(wannier_func_realspace));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
-zlab = ['$\text{Im}(Wannier Func)'];
+zlab = ['Im(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
 keyboard;
 
+%% Diagonalize Other Band Projected Position Operator in the Degenerate Subspace
+%Now we need to re-evaluate our basis and construct the other position
+%operator in the new basis of the semi-degenerate subspace that we just
+%created....
+
+degen_operator = zeros(
+for ii = 1:length(grouped_eigenvals)
+    
+end
 
 
 

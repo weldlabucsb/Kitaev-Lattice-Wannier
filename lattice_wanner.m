@@ -313,6 +313,24 @@ zlab = ['Im(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
 keyboard;
 
+%% Diagonalize Other Band Projected Position Operator in the Degenerate Subspace
+%Now we need to re-evaluate our basis and construct the other position
+%operator in the new basis of the semi-degenerate subspace that we just
+%created....
+
+%NOTE: If everything has gone according to plan, the then rank of this
+%matrix should be L, since each degenerate subspace should have a group of
+%L states in it...
+degen_operator = zeros(L,L);
+for ii = 1:length(grouped_eigenvals)
+    for jj = 1:length(grouped_eigenvals)
+       degen_operator(ii,jj) = (grouped_eigenvecs(:,ii)')*R1*(grouped_eigenvecs(:,jj));
+    end
+end
+keyboard;
+[V1,D1] = eig(degen_operator);
+
+wannier_degen = zeros(realspace_points,realspace_points);
 
 
 
