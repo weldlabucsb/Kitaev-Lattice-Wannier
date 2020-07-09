@@ -283,30 +283,32 @@ realspace_points = 50;
 xrange = linspace(-5,5,realspace_points);
 yrange = linspace(-5,5,realspace_points);
 [X,Y] = meshgrid(xrange,yrange);
-wannier_func_realspace = zeros(realspace_points,realspace_points);
+wannier_func_realspace = zeros(realspace_points,realspace_points,L);
 
 %first let's get our collection of Bloch wave states. Here U is a 5 dim
 %matrix, where the last three are the indices for the band, xquasimomentum
 %and y quasimomentum. 
 U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
-for ii = bands
-    for jj = 1:qsize
-        for kk = 1:qsize
-%             keyboard;
-            wannier_func_realspace = wannier_func_realspace +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,3)...
-                .*U(:,:,ii,jj,kk);
+for aa = 1:L
+    for ii = bands
+        for jj = 1:qsize
+            for kk = 1:qsize
+    %             keyboard;
+                wannier_func_realspace(:,:,aa) = wannier_func_realspace(:,:,aa) +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,aa)...
+                    .*U(:,:,ii,jj,kk);
+            end
         end
     end
 end
 
 figure
-surf(X,Y,real(wannier_func_realspace));
+surf(X,Y,real(wannier_func_realspace(:,:,3)));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['$Re(Wannier Func)$'];
 zlabel(zlab, 'interpreter','latex');
 figure
-surf(X,Y,imag(wannier_func_realspace));
+surf(X,Y,imag(wannier_func_realspace(:,:,3)));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['Im(Wannier Func)'];
@@ -330,8 +332,24 @@ end
 keyboard;
 [V1,D1] = eig(degen_operator);
 
+site_index = 3;
 wannier_degen = zeros(realspace_points,realspace_points);
+for ii = 1:L
+    wannier_degen = wannier_degen + V1(ii,site_index).*wannier_func_realspace(:,:,ii);
+end
 
+figure
+surf(X,Y,surf(X,Y,real(wannier_degen(:,:,3)));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['$Re(Wannier Func)$'];
+zlabel(zlab, 'interpreter','latex');
+figure
+surf(X,Y,imag(wannier_degen(:,:,3)));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['Im(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex');
 
 
 
