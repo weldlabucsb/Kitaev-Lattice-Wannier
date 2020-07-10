@@ -112,6 +112,7 @@ zone_number = 1; %how many zones to plot (for extended zone picture)
 %hammy is the hamiltonian. Needs to accommodate all of the information in
 %components but in 2-d
 hammy = zeros(mLength^2,mLength^2,qsize,qsize);
+tic
 for ii = 1:mLength
     for jj = 1:mLength
         for kk = 1:mLength
@@ -133,10 +134,10 @@ for ii = 1:mLength
         end
     end
 end
+toc
 
 eigvals = zeros((mLength^2),(mLength^2),qsize,qsize);
 eigvecs = zeros((mLength^2),(mLength^2),qsize,qsize);
-toc
 disp("%%%%%%%%%%%%Diagonalizing Hamiltonian %%%%%%%%%%%%%%%")
 
 for ii = 1:qsize
@@ -147,8 +148,7 @@ end
 
 
 %% Plot the band structure
-toc
-disp("%%%%%%%%%%%%%%% Plotting Band Structure %%%%%%%%%%%%%%%%")
+
 % fig1 = figure;
 figure;
 hold all;
@@ -166,9 +166,6 @@ end
 bands = [1 2];
 
 %% De-compactify the eigenvectors:
-
-toc
-disp("%%%%%%%%%%%%%%% De-Compactify Eigenvectors %%%%%%%%%%%%%%%%")
 %this is the eigenvector output from the eig function. Remember that we
 %'compactified' the dimension here, so we want to make it back into the
 %natural matrix form. This is really just for ease of use...
@@ -188,10 +185,6 @@ end
 %great! now we have a more interpretable to get the information that we
 %need
 %% Construct band projected position operators the analytic way...
-
-
-toc 
-disp("%%%%%%%%%%%% Construct Band-Projected Position Operators %%%%%%%%%%%%%%%%")
 %This is using the analytic expression given as a sum in the document. It
 %is still quite long :/
 
@@ -201,7 +194,7 @@ R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 for ii = bands
     for jj = bands
-        disp(['ii is ' num2str(ii) ', jj is ' num2str(jj) ',  % done:  ' num2str(100*((ii-1)+(jj-1))/(length(bands)^2))])
+        disp(['ii is ' num2str(ii) ', jj is ' num2str(jj)])
         for kk = 1:qsize
             for ll = 1:qsize
                 for mm = 1:qsize
@@ -258,16 +251,17 @@ for ii = bands
                          y_element = y_element*(2*pi./L^2);
                         R1((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = x_element;
                         R2((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = y_element;
+%                         toc
                     end
                 end
             end
         end
     end
+    toc
 end
+toc
 
 %% Diagonalize the Band Projected Position Operators.
-toc
-disp("%%%%%%%%%%%%%%%Diagonalize Band-Projected Position Operators%%%%%%%%%%%%%%%%")
 %Technically only one needs to be fully diagonalized first, since after we
 %do this we will only need to diagonalize the other one in a
 %semi-degenerate subspace of the first one
