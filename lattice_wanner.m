@@ -339,16 +339,22 @@ for ii = 1:L
 end
 
 figure
-surf(X,Y,surf(X,Y,real(wannier_degen(:,:,3)));
+surf(X,Y,real(wannier_degen));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['$Re(Wannier Func)$'];
 zlabel(zlab, 'interpreter','latex');
 figure
-surf(X,Y,imag(wannier_degen(:,:,3)));
+surf(X,Y,imag(wannier_degen));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['Im(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex');
+figure
+surf(X,Y,abs(wannier_degen));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+zlab = ['Abs(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
 
 
