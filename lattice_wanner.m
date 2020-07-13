@@ -64,10 +64,11 @@ if (0)
 end
 toc
 disp("%%%%%%%%%%%%%%% Constructing Hamiltonian %%%%%%%%%%%%%%%")
+tic
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 10; %in Er!!
+potentialDepth = 12; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -134,11 +135,12 @@ for ii = 1:mLength
     end
 end
 
+
 eigvals = zeros((mLength^2),(mLength^2),qsize,qsize);
 eigvecs = zeros((mLength^2),(mLength^2),qsize,qsize);
 toc
 disp("%%%%%%%%%%%%Diagonalizing Hamiltonian %%%%%%%%%%%%%%%")
-
+tic
 for ii = 1:qsize
     for jj = 1:qsize
         [eigvecs(:,:,ii,jj),eigvals(:,:,ii,jj)] = eig(hammy(:,:,ii,jj));
@@ -149,6 +151,7 @@ end
 %% Plot the band structure
 toc
 disp("%%%%%%%%%%%%%%% Plotting Band Structure %%%%%%%%%%%%%%%%")
+tic
 % fig1 = figure;
 figure;
 hold all;
@@ -169,6 +172,7 @@ bands = [1 2];
 
 toc
 disp("%%%%%%%%%%%%%%% De-Compactify Eigenvectors %%%%%%%%%%%%%%%%")
+tic
 %this is the eigenvector output from the eig function. Remember that we
 %'compactified' the dimension here, so we want to make it back into the
 %natural matrix form. This is really just for ease of use...
@@ -192,6 +196,7 @@ end
 
 toc 
 disp("%%%%%%%%%%%% Construct Band-Projected Position Operators %%%%%%%%%%%%%%%%")
+tic
 %This is using the analytic expression given as a sum in the document. It
 %is still quite long :/
 
@@ -268,6 +273,7 @@ end
 %% Diagonalize the Band Projected Position Operators.
 toc
 disp("%%%%%%%%%%%%%%%Diagonalize Band-Projected Position Operators%%%%%%%%%%%%%%%%")
+tic
 %Technically only one needs to be fully diagonalized first, since after we
 %do this we will only need to diagonalize the other one in a
 %semi-degenerate subspace of the first one
@@ -309,6 +315,9 @@ for aa = 1:L
     end
 end
 
+toc 
+disp('%%%%%%%%%%%%%%%%%%%%%%%% Plot Real Space Wannier Functions %%%%%%%%%%%%%%')
+tic
 figure
 surf(X,Y,real(wannier_func_realspace(:,:,3)));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
@@ -316,10 +325,10 @@ ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['$Re(Wannier Func)$'];
 zlabel(zlab, 'interpreter','latex');
 figure
-surf(X,Y,imag(wannier_func_realspace(:,:,3)));
+surf(X,Y,abs(wannier_func_realspace(:,:,3)));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
-zlab = ['Im(Wannier Func)'];
+zlab = ['Abs(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
 % keyboard;
 
@@ -365,7 +374,7 @@ ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['Abs(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
 
-
+toc
 
 
 %let's just do one of the eigenvalue/vectors in the group above
