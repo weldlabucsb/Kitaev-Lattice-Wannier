@@ -252,9 +252,9 @@ function [x_element,y_element]=comp_elem_dingue(weightsMatrix,L,max_m,max_qm,ii,
                             %note that I think there is a problem here with
                             %the 
                             x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                .*((L^3)./2 - m0.*L^2);
+                                .*((L^3)./3 - m0.*L^2);
                             y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                .*((L^3)./2 - m0.*L^2);
+                                .*((L^3)./3 - m0.*L^2);
                         else
                             x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
                                 .*((exp(1i*L*2*pi*c2)-1)*((L^2)./2)./(1i*2*pi*c2)-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));

@@ -25,7 +25,7 @@ pol_deg = [0,0,0,0];
 % ph_deg = [0, 0,250,60];
 % th_deg = [0,90,180,270];
 % pol_deg = [0,0,0,0];
-plots = 0; %boolean to turn plots on or off
+plots = 1; %boolean to turn plots on or off
 
 %%%%%%%%%% Alternate lattice params here
 % A = [1,1,1,1];
@@ -81,7 +81,7 @@ waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %point where you would be happy with the accuracy in finding the
 %eigenvalues and vectors, but the KVectors could be arbitrarily large. In
 %this case they are not (<=2), but in principle they could be quite large.
-max_m = 4;
+max_m = 5;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:length(waveAmplitudes)
@@ -100,7 +100,7 @@ end
 Vcoeff = -Vcoeff;
 
 % keyboard;
-%% Range of Quasimomenta to use
+%% Create Hamiltonian
 %now this is where things start to get different from the other code, given
 %that we are considering only certain values of the quasimomentum for
 %computing the wannier states
@@ -135,15 +135,15 @@ for ii = 1:mLength
     end
 end
 
-
-eigvals = zeros((mLength^2),(mLength^2),qsize,qsize);
-eigvecs = zeros((mLength^2),(mLength^2),qsize,qsize);
+num_bands = 2;
+eigvals = zeros(num_bands,num_bands,qsize,qsize);
+eigvecs = zeros((mLength^2),num_bands,qsize,qsize);
 toc
 disp("%%%%%%%%%%%%Diagonalizing Hamiltonian %%%%%%%%%%%%%%%")
 tic
 for ii = 1:qsize
     for jj = 1:qsize
-        [eigvecs(:,:,ii,jj),eigvals(:,:,ii,jj)] = eig(hammy(:,:,ii,jj));
+        [eigvecs(:,:,ii,jj),eigvals(:,:,ii,jj)] = eigs(hammy(:,:,ii,jj),num_bands,'smallestreal');
     end
 end
 
@@ -156,7 +156,7 @@ tic
 figure;
 hold all;
 
-num_bands = 2;
+
 for kk = 1:num_bands
     surf(quasiX,quasiY,reshape(eigvals(kk,kk,:,:),qsize,qsize),'edgecolor','interp');
     xlabel('x quasimomentum, [$k_l$]','interpreter','latex');
@@ -177,15 +177,10 @@ tic
 %'compactified' the dimension here, so we want to make it back into the
 %natural matrix form. This is really just for ease of use...
 weightsMatrix = zeros(mLength,mLength,length(bands),qsize,qsize);
-for ii = 1:mLength
-    for jj = 1:mLength
-        for kk = 1:length(bands)
-            for ll = 1:qsize
-                for mm = 1:qsize
-                    weightsColumn = eigvecs(:,kk,ll,mm);
-                    weightsMatrix(ii,jj,kk,ll,mm) = weightsColumn((mLength*(ii-1)+jj));
-                end
-            end
+for kk = 1:length(bands)
+    for ll = 1:qsize
+        for mm = 1:qsize
+            weightsMatrix(:,:,kk,ll,mm) = reshape(eigvecs(:,kk,ll,mm),mLength,mLength).';
         end
     end
 end
@@ -202,73 +197,95 @@ tic
 
 m0 = ceil((L-1)./2)+0.5;
 
+% R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+% R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+% for ii = bands
+%     for jj = bands
+%         disp(['ii is ' num2str(ii) ', jj is ' num2str(jj) ',  % done:  ' num2str(100*((ii-1)+(jj-1))/(length(bands)^2))])
+%         for kk = 1:qsize
+%             for ll = 1:qsize
+%                 for mm = 1:qsize
+%                     for nn = 1:qsize
+%                         x_element = 0;
+%                         y_element = 0;
+%                         
+%                         for oo = 1:mLength
+%                             for pp = 1:mLength
+%                                 for qq = 1:mLength
+%                                     for rr = 1:mLength
+%                                         n1prime = oo-max_m-1;
+%                                         n1 = pp-max_m-1;
+%                                         n2prime = qq-max_m-1;
+%                                         n2 = rr-max_m-1;
+%                                         m1prime = kk-max_qm-1;
+%                                         m1 = ll-max_qm-1;
+%                                         m2prime = mm-max_qm-1;
+%                                         m2 = nn-max_qm-1;
+%                                         c1 = (n1prime-n1)+(m1prime-m1)./L;
+%                                         c2 = (n2prime-n2)+(m2prime-m2)./L;
+%                                         if c1 == 0
+%                                             if c2 == 0
+%                                                 x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*((L^3)./3 - m0.*L^2);
+%                                                 y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*((L^3)./3 - m0.*L^2);
+%                                             else
+%                                                 x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*((exp(1i*L*2*pi*c2)-1)*((L^2)./2)./(1i*2*pi*c2)-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
+%                                                 y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*(((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))*L-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
+%                                             end
+%                                         else
+%                                             if c2 == 0
+%                                                 x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*(((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))*L-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
+%                                                 y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*((exp(1i*L*2*pi*c1)-1)*((L^2)./2)./(1i*2*pi*c1)-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
+%                                             else
+%                                                 x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*(((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2)).*((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))...
+%                                                     -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
+%                                                 y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+%                                                     .*(((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)).*((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))...
+%                                                     -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
+%                                             end
+%                                         end
+%                                     end
+%                                 end
+%                             end
+%                         end
+%                          x_element = x_element*(2*pi./L^2);
+%                          y_element = y_element*(2*pi./L^2);
+%                         R1((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = x_element;
+%                         R2((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = y_element;
+%                     end
+%                 end
+%             end
+%         end
+%     end
+% end
+
 R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
-for ii = bands
-    for jj = bands
-        disp(['ii is ' num2str(ii) ', jj is ' num2str(jj) ',  % done:  ' num2str(100*((ii-1)+(jj-1))/(length(bands)^2))])
-        for kk = 1:qsize
-            for ll = 1:qsize
-                for mm = 1:qsize
-                    for nn = 1:qsize
-                        x_element = 0;
-                        y_element = 0;
-                        
-                        for oo = 1:mLength
-                            for pp = 1:mLength
-                                for qq = 1:mLength
-                                    for rr = 1:mLength
-                                        n1prime = oo-max_m-1;
-                                        n1 = pp-max_m-1;
-                                        n2prime = qq-max_m-1;
-                                        n2 = rr-max_m-1;
-                                        m1prime = kk-max_qm-1;
-                                        m1 = ll-max_qm-1;
-                                        m2prime = mm-max_qm-1;
-                                        m2 = nn-max_qm-1;
-                                        c1 = (n1prime-n1)+(m1prime-m1)./L;
-                                        c2 = (n2prime-n2)+(m2prime-m2)./L;
-                                        if c1 == 0
-                                            if c2 == 0
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((L^3)./3 - m0.*L^2);
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((L^3)./3 - m0.*L^2);
-                                            else
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((exp(1i*L*2*pi*c2)-1)*((L^2)./2)./(1i*2*pi*c2)-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))*L-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
-                                            end
-                                        else
-                                            if c2 == 0
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))*L-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((exp(1i*L*2*pi*c1)-1)*((L^2)./2)./(1i*2*pi*c1)-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
-                                            else
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2)).*((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))...
-                                                    -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)).*((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))...
-                                                    -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                         x_element = x_element*(2*pi./L^2);
-                         y_element = y_element*(2*pi./L^2);
-                        R1((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = x_element;
-                        R2((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = y_element;
-                    end
-                end
-            end
-        end
+parfor oo = 1:numel(R1)
+    [row,col] = ind2sub([qsize.^2*length(bands),qsize.^2*length(bands)],oo);
+    if (row >= col)
+        [qy1,qx1,band1] = ind2sub([qsize,qsize,length(bands)],row);
+        [qy2,qx2,band2] = ind2sub([qsize,qsize,length(bands)],col);
+        [x_element,y_element] = comp_elem_dingue(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
+        R1(oo) = x_element;
+        R2(oo) = y_element;
     end
 end
+R1 = R1 + (R1-diag(diag(R1)))';
+R2 = R2 + (R2-diag(diag(R2)))';
+
+% [band1,band2,qx1,qy1,qx2,qy2] = ndgrid(bands,bands,1:qsize,1:qsize,1:qsize,1:qsize);
+% parfor oo = 1:numel(R1)
+%     [x_element,y_element] =comp_elem_dingue(weightsMatrix,L,max_m,max_qm,band1(oo),band2(oo),qx1(oo),qy1(oo),qx2(oo),qy2(oo));
+%     R1(oo) = x_element;
+%     R2(oo) = y_element;
+% end
 
 %% Diagonalize the Band Projected Position Operators.
 toc
@@ -282,6 +299,9 @@ tic
 % e1 = eig(R1);
 [V2,D2] = eig(R2);
 E2 = diag(D2);
+figure;
+plot(sort(real(E2)));
+% keyboard;
 grouped_eigenvals = zeros(1,L);
 grouped_eigenvecs = zeros(length(V2(:,1)),L);
 jj = 1;
@@ -292,8 +312,8 @@ for ii = 1:length(E2)
         jj = jj+1;
     end
 end
-jj %just a double check that a group of 5 came out. JJ should be 6
-realspace_points = 50;
+% jj %just a double check that a group of 5 came out. JJ should be 6
+realspace_points = 100;
 xrange = linspace(-5,5,realspace_points);
 yrange = linspace(-5,5,realspace_points);
 [X,Y] = meshgrid(xrange,yrange);
@@ -330,6 +350,7 @@ xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['Abs(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
+
 % keyboard;
 
 %% Diagonalize Other Band Projected Position Operator in the Degenerate Subspace
@@ -355,23 +376,32 @@ for ii = 1:L
     wannier_degen = wannier_degen + V1(ii,site_index).*wannier_func_realspace(:,:,ii);
 end
 
+%Then just take away the imaginary part:
+wannier_degen = wannier_degen .* exp(-1i*angle(wannier_degen(3,3))).*(-1);
+fontsize = 14;
 figure
 surf(X,Y,real(wannier_degen));
-xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
-zlab = ['$Re(Wannier Func)$'];
-zlabel(zlab, 'interpreter','latex');
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+zlab = ['Re(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
 figure
 surf(X,Y,imag(wannier_degen));
-xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
 zlab = ['Im(Wannier Func)'];
-zlabel(zlab, 'interpreter','latex');
+zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
 figure
 surf(X,Y,abs(wannier_degen));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+zlab = ['Abs(Wannier Func)'];
+zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
+figure
+surf(X,Y,angle(wannier_degen));
 xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
-zlab = ['Abs(Wannier Func)'];
+zlab = ['Arg(Wannier Func)'];
 zlabel(zlab, 'interpreter','latex');
 
 toc
@@ -463,4 +493,58 @@ for kk = bands
     
 end
 
+end
+
+function [x_element,y_element]=comp_elem_dingue(weightsMatrix,L,max_m,max_qm,ii,jj,kk,ll,mm,nn)
+    x_element = 0;
+    y_element = 0;
+    m0 = ceil((L-1)./2)+0.5;
+    mLength = 2*max_m + 1;
+    for oo = 1:mLength
+        for pp = 1:mLength
+            for qq = 1:mLength
+                for rr = 1:mLength
+                    n1prime = oo-max_m-1;
+                    n1 = pp-max_m-1;
+                    n2prime = qq-max_m-1;
+                    n2 = rr-max_m-1;
+                    m1prime = kk-max_qm-1;
+                    m1 = ll-max_qm-1;
+                    m2prime = mm-max_qm-1;
+                    m2 = nn-max_qm-1;
+                    c1 = (n1prime-n1)+(m1prime-m1)./L;
+                    c2 = (n2prime-n2)+(m2prime-m2)./L;
+                    if c1 == 0
+                        if c2 == 0
+                            x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*((L^3)./3 - m0.*L^2);
+                            y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*((L^3)./3 - m0.*L^2);
+                        else
+                            x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*((exp(1i*L*2*pi*c2)-1)*((L^2)./2)./(1i*2*pi*c2)-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
+                            y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*(((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))*L-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
+                        end
+                    else
+                        if c2 == 0
+                            x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*(((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))*L-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
+                            y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*((exp(1i*L*2*pi*c1)-1)*((L^2)./2)./(1i*2*pi*c1)-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
+                        else
+                            x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*(((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2)).*((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))...
+                                -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
+                            y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
+                                .*(((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)).*((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))...
+                                -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
+                        end
+                    end
+                end
+            end
+        end
+    end
+    x_element = x_element*(2*pi./L^2);
+    y_element = y_element*(2*pi./L^2);
 end

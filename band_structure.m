@@ -5,7 +5,7 @@ lattice_wavelength = 1.064e-6;%meters
 num_band = 5;
 lattice_depth = 100; %Er
 v_0 = lattice_depth;
-max_m = 50;
+max_m = 5;
 m_len = max_m*2+1
 
 %here q is the quasimomentum, but perhaps I should get into the habit of
@@ -26,6 +26,7 @@ for ii = 1:m_len
         end
     end
 end
+keyboard
 %initialize the array to store the eigenvalues
 eigs = zeros(m_len,length(qs));
 for i = 1:length(qs)

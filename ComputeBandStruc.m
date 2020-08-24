@@ -22,7 +22,7 @@ pol_deg = [0,0,0,0];
 % ph_deg = [0, 0,250,60];
 % th_deg = [0,90,180,270];
 % pol_deg = [0,0,0,0];
-plots = 0; %boolean to turn plots on or off
+plots = 1; %boolean to turn plots on or off
 
 % A = [1,1,1,1];
 % ph_deg = [0, 0,250,60];
@@ -50,7 +50,7 @@ end
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 5; %in Er!!
+potentialDepth = 4; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -131,7 +131,7 @@ for ii = 1:qsize
 end
 toc
 %% Plot the band structure
-
+keyboard;
 % fig1 = figure;
 figure;
 hold all;
@@ -149,7 +149,7 @@ end
 %% Plot the bloch functions
 %The bloch functions are themselves a function of the quasimomentum, so
 %select a mometum point here to look at. 
-qxIndex = 1;
+qxIndex = 3;
 qyIndex = qxIndex;
 bandNumber = 2;
 %this is the eigenvector output from the eig function. Remember that we
@@ -186,14 +186,14 @@ zlabel(zlab, 'interpreter','latex');
 
 
 %% Plot Bloch Waves (I.E. The actual eigenvalues)
-bands = [1 2];
+bands = [1 2 3 4 5];
 U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
 figure
 surf(X,Y,abs(U(:,:,bandNumber,qxIndex,qyIndex)));
-xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
 zlab = ['Bloch Wave [$|u_{n = ' num2str(bandNumber)' '}|, \mathbf{q} = (' num2str(quasiX(qxIndex,qyIndex)) ',' num2str(quasiY(qxIndex,qyIndex)) ')$'];
-zlabel(zlab, 'interpreter','latex');
+zlabel(zlab, 'interpreter','latex','fontsize',30);
 
 figure
 surf(X,Y,real(U(:,:,bandNumber,qxIndex,qyIndex)));
@@ -201,8 +201,31 @@ xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
 ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
 zlab = ['Bloch Wave [$RE(u_{n = ' num2str(bandNumber)' '}, \mathbf{q} = (' num2str(quasiX(qxIndex,qyIndex)) ',' num2str(quasiY(qxIndex,qyIndex)) ')$'];
 zlabel(zlab, 'interpreter','latex');
-keyboard;
+% keyboard;
 
+figure
+surf(X,Y,abs(U(:,:,bandNumber,qxIndex,qyIndex)));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+zlab = ['$|\Psi(\mathbf(r))|$'];
+zlabel(zlab, 'interpreter','latex','fontsize',30);
+title('Delocalized State','interpreter','latex','fontsize',30);
+
+figure
+surf(X,Y,abs(U(:,:,1,qxIndex,qyIndex)));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+zlab = ['$|\Psi(\mathbf(r))|$'];
+zlabel(zlab, 'interpreter','latex','fontsize',30);
+title('Delocalized State','interpreter','latex','fontsize',30);
+
+figure
+surf(X,Y,abs(U(:,:,4,qxIndex,qyIndex)));
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',30);
+zlab = ['$|\Psi(\mathbf(r))|$'];
+zlabel(zlab, 'interpreter','latex','fontsize',30);
+title('Delocalized State','interpreter','latex','fontsize',30);
 
 
 %% Construct band projected position operators
