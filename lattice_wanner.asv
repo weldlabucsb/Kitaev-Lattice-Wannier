@@ -13,6 +13,7 @@ function[] = lattice_wannier()
 %% generate the lattice potential
 %using the 6 cosine components of the lattice potential generated as output
 %from Peter's code.
+% A = [1,1,0,0];
 A = [1,1,0.6,0.5];
 ph_deg = [0, 0, 90, -70];
 th_deg = [0,90,180,270];

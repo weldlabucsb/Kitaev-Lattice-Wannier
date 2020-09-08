@@ -16,7 +16,7 @@ deltaKsUnitless = round(deltaKsUnitless);
 potentialDepth = 40; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 
-max_m = 2;
+max_m = 9;
 mLength = 2*max_m + 1;
 Vcoeff = zeros(mLength,mLength);
 for jj = 1:length(waveAmplitudes)
@@ -37,7 +37,7 @@ Vcoeff = -Vcoeff;
 % keyboard;
 %% Create Hamiltonian
 
-L = 3; %this is the number of lattice sites along one direction to consider. The total number of sites to consider is L^2
+L = 5; %this is the number of lattice sites along one direction to consider. The total number of sites to consider is L^2
 max_qm = floor(L/2); %to make sure that we are always in the first BZ
 qsize = 2*max_qm + 1;
 zone_number = 1; %how many zones to plot (for extended zone picture)
@@ -94,131 +94,38 @@ end
 %great! now we have a more interpretable to get the information that we
 %need
 %% Construct band projected position operators the analytic way...
-
-
 toc 
 disp("%%%%%%%%%%%% Construct Band-Projected Position Operators %%%%%%%%%%%%%%%%")
-disp('doing it the dingue way right now');
+disp('Parallel operation only');
 tic
-%This is using the analytic expression given as a sum in the document. It
-%is still quite long :/
-
-m0 = ceil((L-1)./2)+0.5;
-
 R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
-for ii = bands
-    for jj = bands
-        disp(['ii is ' num2str(ii) ', jj is ' num2str(jj) ',  % done:  ' num2str(100*((ii-1)*length(bands)+(jj-1))/(length(bands)^2))])
-        for kk = 1:qsize
-            for ll = 1:qsize
-                for mm = 1:qsize
-                    for nn = 1:qsize
-                        x_element = 0;
-                        y_element = 0;
-                        
-                        for oo = 1:mLength
-                            for pp = 1:mLength
-                                for qq = 1:mLength
-                                    for rr = 1:mLength
-                                        n1prime = oo-max_m-1;
-                                        n1 = pp-max_m-1;
-                                        n2prime = qq-max_m-1;
-                                        n2 = rr-max_m-1;
-                                        m1prime = kk-max_qm-1;
-                                        m1 = ll-max_qm-1;
-                                        m2prime = mm-max_qm-1;
-                                        m2 = nn-max_qm-1;
-                                        c1 = (n1prime-n1)+(m1prime-m1)./L;
-                                        c2 = (n2prime-n2)+(m2prime-m2)./L;
-                                        if c1 == 0
-                                            if c2 == 0
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((L^3)./3 - m0.*L^2);
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((L^3)./3 - m0.*L^2);
-                                            else
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((exp(1i*L*2*pi*c2)-1)*((L^2)./2)./(1i*2*pi*c2)-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))*L-m0*(exp(1i*L*2*pi*c2)-1)*L./(1i*2*pi*c2));
-                                            end
-                                        else
-                                            if c2 == 0
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))*L-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*((exp(1i*L*2*pi*c1)-1)*((L^2)./2)./(1i*2*pi*c1)-m0*(exp(1i*L*2*pi*c1)-1)*L./(1i*2*pi*c1));
-                                            else
-                                                x_element = x_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2)).*((exp(1i*L*2*pi*c1)*(1i*L*2*pi*c1-1)+1)./(-(2*pi*c1)^2))...
-                                                    -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
-                                                y_element = y_element + conj(weightsMatrix(oo,qq,ii,kk,mm)).*weightsMatrix(pp,rr,jj,ll,nn).*exp(-2*pi*1i*m0*(c1+c2))...
-                                                    .*(((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)).*((exp(1i*L*2*pi*c2)*(1i*L*2*pi*c2-1)+1)./(-(2*pi*c2)^2))...
-                                                    -m0*((exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2))*((exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1)));
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                         x_element = x_element*(2*pi./L^2);
-                         y_element = y_element*(2*pi./L^2);
-                        R1((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = x_element;
-                        R2((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn) = y_element;
-                    end
-                end
-            end
-        end
-    end
-end
-toc
-
-disp('Now with functional assignment')
-tic
-m0 = ceil((L-1)./2)+0.5;
-
-R3 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
-R4 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
-for ii = bands
-    for jj = bands
-        disp(['ii is ' num2str(ii) ', jj is ' num2str(jj) ',  % done:  ' num2str(100*((ii-1)*length(bands)+(jj-1))/(length(bands)^2))])
-        for kk = 1:qsize
-            for ll = 1:qsize
-                for mm = 1:qsize
-                    for nn = 1:qsize
-                        [R3((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn),R4((ii-1)*(qsize)^2 + (kk-1)*qsize + mm,(jj-1)*qsize^2+(ll-1)*qsize+nn)] =comp_elem_dingue(weightsMatrix,L,max_m,max_qm,ii,jj,kk,ll,mm,nn);
-                    end
-                end
-            end
-        end
-    end
-end
-toc
-disp('Now for the whole enchilada. Parfor operation bois');
-tic
-%Now the time has come to make this possible to run more in parallel since
-%I need to do some kind of linear indexing to make this possible to run in
-%a parfor setup, tu comprends?
-
-%Make the n-dgrid of all of the different indices that we were previously
-%looping over above. Let's keep it in the same order to make sure that
-%things are relatively legible.
-R5 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
-R6 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
-for oo = 1:numel(R1)
+parfor oo = 1:numel(R1)
     [row,col] = ind2sub([qsize.^2*length(bands),qsize.^2*length(bands)],oo);
     if (row >= col)
         [qy1,qx1,band1] = ind2sub([qsize,qsize,length(bands)],row);
         [qy2,qx2,band2] = ind2sub([qsize,qsize,length(bands)],col);
-%         [component_part_x,component_part_y,integral_part_x,integral_part_y,x_elem,y_elem] = comp_elem_dingue_testing(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
-        [x_element,y_element] = comp_elem_ok(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
-%         disp('does x equal')
-%         x_element == other_x
-%         y_element == other_y
-%         keyboard;
-        R5(oo) = x_element;
-        R6(oo) = y_element;
+        [R1(oo),R2(oo)] = comp_elem_dingue(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
+    end
+end
+R1 = R1 + (R1-diag(diag(R1)))';
+R2 = R2 + (R2-diag(diag(R2)))';
+
+
+
+
+toc 
+disp("%%%%%%%%%%%% Construct Band-Projected Position Operators %%%%%%%%%%%%%%%%")
+disp('Now with tensorized computation AND parallelization');
+tic
+R5 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+R6 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+parfor oo = 1:numel(R5)
+    [row,col] = ind2sub([qsize.^2*length(bands),qsize.^2*length(bands)],oo);
+    if (row >= col)
+        [qy1,qx1,band1] = ind2sub([qsize,qsize,length(bands)],row);
+        [qy2,qx2,band2] = ind2sub([qsize,qsize,length(bands)],col);
+        [R5(oo),R6(oo)] = comp_elem_ok(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
     end
 end
 R5 = R5 + (R5-diag(diag(R5)))';
@@ -285,8 +192,6 @@ function [x_element,y_element]=comp_elem_dingue(weightsMatrix,L,max_m,max_qm,ii,
 end
 
 function [x_element,y_element]=comp_elem_ok(weightsMatrix,L,max_m,max_qm,ii,jj,kk,ll,mm,nn)
-%     x_element = 0;
-%     y_element = 0;
     m0 = ceil((L-1)./2)+0.5;
     mLength = 2*max_m + 1;
     braweightsMatrix = weightsMatrix(:,:,ii,kk,mm);
@@ -298,23 +203,19 @@ function [x_element,y_element]=comp_elem_ok(weightsMatrix,L,max_m,max_qm,ii,jj,k
         end
     end
     [oo,qq,pp,rr] = ndgrid(1:mLength,1:mLength,1:mLength,1:mLength);
-%     n1 = oo-max_m-1;
-%     n2 = pp-max_m-1;
-%     n1prime = qq-max_m-1;
-%     n2prime = rr-max_m-1;
 
 %trying a quick re-definition since things were a little differently
 %defined up there. 
-    n1prime = oo-max_m-1;
-    n2prime = qq-max_m-1;
-    n1 = pp-max_m-1;
-    n2 = rr-max_m-1;
-    m1prime = kk-max_qm-1;
-    m1 = ll-max_qm-1;
-    m2prime = mm-max_qm-1;
-    m2 = nn-max_qm-1;
-    c1 = (n1prime-n1)+(m1prime-m1)./L;
-    c2 = (n2prime-n2)+(m2prime-m2)./L;
+%     n1prime = oo-max_m-1;
+%     n2prime = qq-max_m-1;
+%     n1 = pp-max_m-1;
+%     n2 = rr-max_m-1;
+%     m1prime = kk-max_qm-1;
+%     m1 = ll-max_qm-1;
+%     m2prime = mm-max_qm-1;
+%     m2 = nn-max_qm-1;
+    c1 = (oo-max_m-1-pp-max_m-1)+(kk-max_qm-1-ll-max_qm-1)./L;
+    c2 = (qq-max_m-1-rr-max_m-1)+(mm-max_qm-1-nn-max_qm-1)./L;
     
     %first compute the c1 short integral. Use is nan to rectify the
     %removable singularities.
@@ -339,12 +240,6 @@ function [x_element,y_element]=comp_elem_ok(weightsMatrix,L,max_m,max_qm,ii,jj,k
     x_element = sum(x_element,'all');
     y_element = (2*pi./L^2)*fourdweights.*exp(-1i*2*pi*m0*(c1+c2)).*(c2long.*c1short-m0.*c1short.*c2short);
     y_element = sum(y_element,'all');
-%     component_part_x = fourdweights;
-%     component_part_y = fourdweights;
-%     integral_part_x = exp(-1i*2*pi*m0*(c1+c2)).*(c1long.*c2short-m0.*c1short.*c2short);
-%     integral_part_y = exp(-1i*2*pi*m0*(c1+c2)).*(c2long.*c1short-m0.*c1short.*c2short);
-    
-    
 end
 
 function [component_part_x,component_part_y,integral_part_x,integral_part_y,x_element,y_element]=comp_elem_dingue_testing(weightsMatrix,L,max_m,max_qm,ii,jj,kk,ll,mm,nn)

@@ -1,16 +1,15 @@
-%now to do the lattice bands!!
-
-
+function[] = band_structure()
 lattice_wavelength = 1.064e-6;%meters
 num_band = 5;
-lattice_depth = 100; %Er
+lattice_depth = 5; %Er
 v_0 = lattice_depth;
 max_m = 5;
 m_len = max_m*2+1
 
 %here q is the quasimomentum, but perhaps I should get into the habit of
 %making this k since I believe that this is the more standard notations
-qs = linspace(-1,1,100);
+zone_number = 2;
+qs = linspace(-1*zone_number,1*zone_number,100);
 %initialize the matrix
 h = zeros(max_m*2+1,max_m*2+1,length(qs));
 for ii = 1:m_len
@@ -26,7 +25,7 @@ for ii = 1:m_len
         end
     end
 end
-keyboard
+% keyboard
 %initialize the array to store the eigenvalues
 eigs = zeros(m_len,length(qs));
 for i = 1:length(qs)
@@ -37,10 +36,11 @@ figure;
 hold all;
 for i = 1:num_band
     %plot the energy vs quasimomentum
-    plot(qs,eigs(i,:));
+    plot(qs,eigs(i,:),'linewidth',3);
 end
-xlabel('quasimomentum(q), [$k_{l}$]','interpreter','latex')
-ylabel('energy in Recoils')
+xlabel('Quasimomentum, $[q] = k_{l}$','interpreter','latex','fontsize',15)
+ylabel('Energy, $[E] = E_{r}$','interpreter','latex','fontsize',15)
+title('Cosine Lattice Band Structure','interpreter','latex','fontsize',15)
 
 disp('now finding the tunneling matrix element')
 band_max = max(eigs(1,:))
@@ -52,21 +52,26 @@ J = J.*(915./1064)^2
 %coefficients of the eigenvector to do this since this is how we get the
 %function...
 
+
+%we can do plotting later if we want...
 %since we need to do this at a specific quasi-momentum, let us do it at
-%zero for now
-q_index = 50;
-q = qs(q_index)
-%to find the bloch functions we actually need the eigenvectors, not just
-%the eigenvalues
-[weights,eigs] = eig(h(:,:,q_index));
-m_vec = -max_m:max_m;
-x = linspace(0,20,200);
-u = zeros(1,length(x));
-for ii = 1:length(x)
-    u(ii) = abs(bloch_func(weights(:,1),m_vec,x(ii)));
+% %zero for now
+
+% q_index = 50;
+% q = qs(q_index)
+% %to find the bloch functions we actually need the eigenvectors, not just
+% %the eigenvalues
+% [weights,eigs] = eig(h(:,:,q_index));
+% m_vec = -max_m:max_m;
+% x = linspace(0,20,200);
+% u = zeros(1,length(x));
+% for ii = 1:length(x)
+%     u(ii) = abs(bloch_func(weights(:,1),m_vec,x(ii)));
+% end
+% figure;
+% plot(x,u);
+
 end
-figure;
-plot(x,u);
 
 function [u] = bloch_func(weights,m_vec,x)%x is in units of d, the lattice spacing (pi/kl)
 u = 0;
