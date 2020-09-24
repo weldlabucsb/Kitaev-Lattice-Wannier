@@ -46,7 +46,7 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLattic
 
     [X,Y] = meshgrid(xVals,yVals);
     
-    kMag = 2*pi;  %Magnitude of kvectors.
+    kMag = 2*pi;  %Magnitude of kvectors. Used to make position unit one wavelength
 
 
 

@@ -1,15 +1,4 @@
 function[] = lattice_wannier()
-
-
-
-%COMPUTEBANDSTRUC Compute 2-d band structure of optical lattice 
-%   Using the potential output by the general lattice for N beams code, I
-%   will use this program to compute the electronic band structure of the
-%   system. Note, this needs to be in the same directory (or path) as the
-%   general lattice complex function given that the latter needs to be
-%   called to generate the potential (specifically the underlying
-%   sinusoidal representation)
-
 %% generate the lattice potential
 %using the 6 cosine components of the lattice potential generated as output
 %from Peter's code.
@@ -20,13 +9,6 @@ pol_deg = [0,0,0,0];
 
 plots = 0; %boolean to turn plots on or off
 
-%%%%%%%%%% Alternate lattice params here
-% A = [1,1,1,1];
-% ph_deg = [0, 0,250,60];
-% th_deg = [0,90,180,270];
-% pol_deg = [0,0,0,0];
-% plots = 1;
-%%%%%%%%%%%%
 
 %%%%%%%%%%%%% basis rotation %%%%%%%%%%%
 th_deg = th_deg-45;
@@ -60,8 +42,14 @@ disp("%%%%%%%%%%%%%%% Constructing Hamiltonian %%%%%%%%%%%%%%%")
 tic
 %since these are effectively indices (in fourier space), we need these to
 %be rounded to integers. They pretty much already are to MATLAB precision
+
+%NOTE, there is a bit of weirdness going on here in the sense that really I
+%should be rescaling the basis vectors when I rotate the axes by 45
+%degrees. However, right now the round function is actually taking care of
+%that. But, for other lattice configurations this could be broken. A note
+%for fixing later... (I made this note around 9/10/2020
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 60; %in Er!!
+potentialDepth = 22; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find the Complex Exponential Coefficients
 %Effectively I just want the coefficients of the complex fourier series
@@ -87,13 +75,28 @@ end
 %intensity
 Vcoeff = -Vcoeff;
 
+%% Plot the Potential (Optional, mainly for troubleshooting...)
+realspace_points = 100;
+xrange = linspace(-2,2,realspace_points);
+yrange = linspace(-2,2,realspace_points);
+[X,Y] = meshgrid(xrange,yrange);
+plot_realspace = fourierbasis_to_realspace(Vcoeff,max_m,X,Y);
+figure
+fontsize = 20;
+contourf(X,Y,real(plot_realspace),10);
+xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+title('Lattice Potential');
+% zlab = ['Lattice Potential'];
+% zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
+
 % keyboard;
 %% Create Hamiltonian
 %now this is where things start to get different from the other code, given
 %that we are considering only certain values of the quasimomentum for
 %computing the wannier states
 
-L = 5; %this is the number of lattice sites along one direction to consider. The total number of sites to consider is L^2
+L = 7; %how many real space lattice sites to use. MAKE AN ODD NUMBER
 max_qm = floor(L/2); %to make sure that we are always in the first BZ
 qsize = 2*max_qm + 1;
 zone_number = 1; %how many zones to plot (for extended zone picture)
@@ -210,7 +213,7 @@ tic
 [D2,indices] = sort(D2,'comparisonMethod','real');
 V2 = V2(:,indices);
 
-
+% keyboard;
 %perhaps here we compute all of the possible interations between the
 %different wannier functions specified here?
 %which x positions do we want to consider? Note these aren't the actual
@@ -219,7 +222,7 @@ V2 = V2(:,indices);
 %the one next to it so that I can compute tunelling element between them
 x_positions = [ceil(L/2) (ceil(L/2)+1) (ceil(L/2)+2)];
 %and the same story for the y positions
-y_positions = [ceil(L/2) (ceil(L/2)+1)];
+y_positions = [ceil(L/2) (ceil(L/2)+1) (ceil(L/2)+2)];
 %which wannier funcs do we want? For this lattice we have two, and you
 %could choose either one. Make sure that they are valid indices
 sub_unit_funcs = [1 2]; 
@@ -252,39 +255,64 @@ end
 %note that we are here now. Now it's time to update the rest of the code to
 %make sure that it is compatible with this new architecture
 
-%now a single cell is grouped together, so there are multiple wannier
-%functions that are grouped in a single index of x_positions
-if(0)
-    %first let's get our collection of Bloch wave states. Here U is a 5 dim
-    %matrix, where the last three are the indices for the band, xquasimomentum
-    %and y quasimomentum. 
-    for aa = 1:L
-        for ii = bands
-            for jj = 1:qsize
-                for kk = 1:qsize
-        %             keyboard;
-                    wannier_func_realspace(:,:,aa) = wannier_func_realspace(:,:,aa) +  grouped_eigenvecs((ii-1)*(qsize)^2 + (jj-1)*qsize + kk,aa)...
-                        .*U(:,:,ii,jj,kk);
-                end
-            end
-        end
-    end
 
-    toc 
-    disp('%%%%%%%%%%%%%%%%%%%%%%%% Plot Real Space Wannier Functions %%%%%%%%%%%%%%')
-    tic
+%% Plot Partially Localized Functions
+toc
+disp('%%%%%%%%%%%%%%%%%%Plotting First Diagonalized States%%%%%%%%%%%%%%%%')
+tic
+%now to plot the partially localized functions
+realspace_points = 100;
+xrange = linspace(-2,2,realspace_points);
+yrange = linspace(-2,2,realspace_points);
+[X,Y] = meshgrid(xrange,yrange);
+U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
+
+%plotting individual bloch states (for the Fio/LS presentation)
+if(1)
+    index = 12; 
+    bloch_state = zeros(qsize.^2*length(bands));
+    bloch_state(index) = 1;
+    bloch_state_realspace = zeros(realspace_points,realspace_points);
+    bloch_state_realspace = blochbasis_to_realspace(bloch_state,U,qsize,bands);
+    fontsize = 26;
     figure
-    surf(X,Y,real(wannier_func_realspace(:,:,3)));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-    ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
-    zlab = ['$Re(Wannier Func)$'];
-    zlabel(zlab, 'interpreter','latex');
+    surf(X,Y,abs(bloch_state_realspace));
+%     xlim([-2,2])
+%     ylim([-2,2])
+    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    zlab = ['Re(Wannier Func)'];
+    title('Bloch Eigenstate','interpreter','latex','fontsize',fontsize);
+%     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
+end
+
+if(1)
+    x_pos_index = 1;
+    sub_index = 1;
+    wannier_func_index = 1;
+    wannier_func_realspace = zeros(realspace_points,realspace_points);
+    wannier_func_realspace = blochbasis_to_realspace(grouped_eigenvecs(:,sub_index,x_pos_index,wannier_func_index),U,qsize,bands);
+    fontsize = 26;
     figure
-    surf(X,Y,abs(wannier_func_realspace(:,:,3)));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-    ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+    surf(X,Y,real(wannier_func_realspace));
+    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    zlab = ['Re(Wannier Func)'];
+    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
+    figure
+    surf(X,Y,imag(wannier_func_realspace));
+    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    zlab = ['Im(Wannier Func)'];
+    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
+    figure
+    surf(X,Y,abs(wannier_func_realspace),'edgecolor','interp');
+    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    title('Partially Localized','interpreter','latex','fontsize',fontsize);
     zlab = ['Abs(Wannier Func)'];
-    zlabel(zlab, 'interpreter','latex');
+%     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
+
 end
 
 %% Construct and Diagonalize Other Position Operator
@@ -302,7 +330,8 @@ tic
 %note that matlab does not allow for higher dimensional matrix
 %multipliciation, although there is some code ndfun.c that we could try, I
 %have that saved in case we want ultimate performance. This is already a
-%'tensorized' calculation, if you will
+%vectorized calculation, and there isn't a straightforward way to deal with
+%higher dimensional matrix multiplication in matlab
 degen_operator = zeros(L,L,length(x_positions),length(sub_unit_funcs));
 for ii = 1:length(x_positions)
     for jj = 1:length(sub_unit_funcs)
@@ -338,15 +367,11 @@ toc
 disp("%%%%%%%%%%%%%%%Generate Real Space Plots%%%%%%%%%%%%%%%%")
 tic
 
-realspace_points = 100;
-xrange = linspace(-5,5,realspace_points);
-yrange = linspace(-5,5,realspace_points);
-[X,Y] = meshgrid(xrange,yrange);
+
 x_pos_index = 1;
 y_pos_index = 1;
 wannier_func_index = 1;
 wannier_func_realspace = zeros(realspace_points,realspace_points);
-U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
 wannier_func_realspace = blochbasis_to_realspace(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),U,qsize,bands);
 
 
@@ -361,29 +386,31 @@ wannier_func_realspace = blochbasis_to_realspace(wannier_states_in_bloch_basis(:
 if (1)
     %Then just take away the imaginary part:
     wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(3,3))).*(-1);
-    fontsize = 14;
+    fontsize = 26;
     figure
     surf(X,Y,real(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     zlab = ['Re(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
     surf(X,Y,imag(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     zlab = ['Im(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
-    surf(X,Y,abs(wannier_func_realspace));
+    surf(X,Y,abs(wannier_func_realspace),'edgecolor','interp');
+%     surf(X,Y,abs(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Abs(Wannier Func)'];
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    zlab = ['Abs(Wannier)'];
+    title('Wannier Func 1','interpreter','latex','fontsize',fontsize);
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
     surf(X,Y,angle(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-    ylabel('y Pos., [$\lambda_l$]','interpreter','latex');
+    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex');
     zlab = ['Arg(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex');
 end
@@ -416,141 +443,5 @@ J = (wannier_states_in_bloch_basis(:,1,1,1)')*sub_space_hamiltonian*wannier_stat
 
 end
 
-function [real_space] = blochbasis_to_realspace(vector,U,qsize,bands)
-%for now this is just for one state, and will take you from the bloch basis
-%to real space
-%the input U is a collection of the real space bloch states, generated
-%using the bloch_wave function below
-%find the dimensions of the real space representation of the collection of
-%bloch states (the first two dimensions of the matrix U)
-dims = size(U);
-real_space = zeros(dims(1:2));
 
-%potentially bsxfun could be good here.
-%https://www.mathworks.com/matlabcentral/answers/104127-how-to-multiply-multidimensional-arrays-with-a-column-vector
-for ii = bands
-    for jj = 1:qsize
-        for kk = 1:qsize
-            real_space(:,:) = real_space(:,:) +  vector((ii-1)*(qsize)^2 + (jj-1)*qsize + kk)...
-                .*U(:,:,ii,jj,kk);
-        end
-    end
-end
 
-end
-
-function [U] = bloch_func(weights,max_m,xmat,ymat)
-%NOTE: we have to be a bit careful when using meshgrid here. Unfortunately
-%the A(i,j) matrix indexing convention conflicts with our traditional idea
-%of (x,y) pairs. For (i,j), i represents a vertical displacement, but for (x,y)
-%the first index represents horizontal displacement. If this isn't clear,
-%try testing a simple example of meshgrid, or check MATLAB documentation
-%site. Long story short we can just transpose the weights matrix to take
-%this into account
-[mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
-U = zeros(length(xmat(:,1)),length(ymat(:,1)));
-for ii = 1:(2*max_m+1)
-    for jj = 1:(2*max_m+1)
-        mx = mxMat(ii,jj);
-        my = myMat(ii,jj);
-        U = U + weights(jj,ii).*(exp(1i.*2.*pi.*mx.*xmat)).*(exp(1i.*2.*pi.*my.*ymat));
-    end
-end
-
-end
-
-function [U] = bloch_wave(eigvecs,max_m,xmat,ymat,quasiX,quasiY,bands)
-%Now the goal of this function is to actually return the eigenfunctions of
-%the Hamiltonian in real space. The other ones are the bloch functions (that have the
-%periodicity of the lattice)
-
-%This is the momenta grid.
-[mxMat,myMat] = meshgrid(-max_m:max_m,-max_m:max_m);
-mLength = 2*max_m + 1;
-%Note that the first two indices are the real space representation of the
-%bloch waves. The next two indices are the quasimomenta. The final one is
-%the band index. I think that we should only need the first two, since we
-%have two minima in a single lattice cell
-U = zeros(length(xmat(:,1)),length(ymat(:,1)),length(bands),length(quasiX(:,1)),length(quasiY(:,1)));
-for kk = bands
-    %please see the note in the bloch function function about why this is
-    %weightsMatrix(jj,ii) as opposed to (ii,jj).
-    for ll = 1:length(quasiX(:,1))
-        for mm = 1:length(quasiY(:,1))
-            
-            weightsColumn  = eigvecs(:,kk,ll,mm);
-            weightsMatrix = zeros(mLength,mLength);
-            %NOTE, this should be replaced with a reshape command!
-            for ii = 1:mLength
-                for jj = 1:mLength
-                    weightsMatrix(ii,jj) = weightsColumn((mLength*(ii-1)+jj));
-                end
-            end
-            
-            for ii = 1:mLength
-                for jj = 1:mLength
-                    mx = mxMat(ii,jj);
-                    my = myMat(ii,jj);
-                    U(:,:,kk,ll,mm) = U(:,:,kk,ll,mm) +...
-                        weightsMatrix(jj,ii).*(exp(1i.*2.*pi.*(mx+quasiX(ll,mm)).*xmat)).*(exp(1i.*2.*pi.*(my+quasiY(ll,mm)).*ymat));
-                end
-            end
-        end
-    end
-    
-end
-
-end
-
-function [x_element,y_element]=comp_elem(weightsMatrix,L,max_m,max_qm,ii,jj,kk,ll,mm,nn)
-    m0 = ceil((L-1)./2)+0.5;
-    mLength = 2*max_m + 1;
-    braweightsMatrix = weightsMatrix(:,:,ii,kk,mm);
-    ketweightsMatrix = weightsMatrix(:,:,jj,ll,nn);
-    fourdweights = repmat(conj(braweightsMatrix),1,1,mLength,mLength);
-    for pp = 1:mLength
-        for rr = 1:mLength
-            fourdweights(:,:,pp,rr) = fourdweights(:,:,pp,rr).*ketweightsMatrix(pp,rr);
-        end
-    end
-    [oo,qq,pp,rr] = ndgrid(1:mLength,1:mLength,1:mLength,1:mLength);
-% In case the assignment of c1 and c2 is a bit confusing, note that the
-% calucation comes from the following intermediate steps:
-%     n1prime = oo-max_m-1;
-%     n2prime = qq-max_m-1;
-%     n1 = pp-max_m-1;
-%     n2 = rr-max_m-1;
-%     m1prime = kk-max_qm-1;
-%     m1 = ll-max_qm-1;
-%     m2prime = mm-max_qm-1;
-%     m2 = nn-max_qm-1;
-%     c1 = (n1prime-n1)+(m1prime-m1)./L;
-%     c2 = (n2prime-n2)+(m2prime-m2)./L;
-
-    c1 = (oo-pp)+(kk-ll)./L;
-    c2 = (qq-rr)+(mm-nn)./L;
-    
-    %first compute the c1 short integral. Use is nan to rectify the
-    %removable singularities.
-    c1short = (exp(1i*L*2*pi*c1)-1)./(1i*2*pi*c1);
-    c1short(isnan(c1short)) = L;
-    
-    %next short c2 integral.
-    c2short = (exp(1i*L*2*pi*c2)-1)./(1i*2*pi*c2);
-    c2short(isnan(c2short)) = L;
-    
-    %next long c1 integral
-    c1long = (exp(1i*L*2*pi*c1).*(1i*L*2*pi*c1-1)+1)./(-4*(pi^2)*(c1.*c1));
-    c1long(isnan(c1long)) = L^2/2;
-    
-    %finally long c2 integral
-    c2long = (exp(1i*L*2*pi*c2).*(1i*L*2*pi*c2-1)+1)./(-4*(pi^2)*(c2.*c2));
-    c2long(isnan(c2long)) = L^2/2;
-    
-    %Now to combine everything, and sum:
-    x_element = (2*pi./L^2)*fourdweights.*exp(-1i*2*pi*m0*(c1+c2)).*(c1long.*c2short-m0.*c1short.*c2short);
-    x_element = sum(x_element,'all');
-    y_element = (2*pi./L^2)*fourdweights.*exp(-1i*2*pi*m0*(c1+c2)).*(c2long.*c1short-m0.*c1short.*c2short);
-    y_element = sum(y_element,'all');
-
-end

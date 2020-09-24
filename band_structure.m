@@ -1,14 +1,15 @@
 function[] = band_structure()
 lattice_wavelength = 1.064e-6;%meters
-num_band = 5;
+num_band = 7;
 lattice_depth = 5; %Er
 v_0 = lattice_depth;
-max_m = 5;
+max_m = 10;
 m_len = max_m*2+1
 
+close all;
 %here q is the quasimomentum, but perhaps I should get into the habit of
 %making this k since I believe that this is the more standard notations
-zone_number = 2;
+zone_number = 1;
 qs = linspace(-1*zone_number,1*zone_number,100);
 %initialize the matrix
 h = zeros(max_m*2+1,max_m*2+1,length(qs));
@@ -36,11 +37,18 @@ figure;
 hold all;
 for i = 1:num_band
     %plot the energy vs quasimomentum
-    plot(qs,eigs(i,:),'linewidth',3);
+%     plot(qs,eigs(i,:),'linewidth',3);
+    
+    if (i < 5)
+        plot(qs,eigs(i,:),'linewidth',3);
+    else
+        plot(qs,eigs(i,:),'linewidth',3,'linestyle','--');
+    end
+    
 end
-xlabel('Quasimomentum, $[q] = k_{l}$','interpreter','latex','fontsize',15)
-ylabel('Energy, $[E] = E_{r}$','interpreter','latex','fontsize',15)
-title('Cosine Lattice Band Structure','interpreter','latex','fontsize',15)
+xlabel('Quasimomentum $[k_l]$','interpreter','latex','fontsize',15)
+ylabel('Energy $[E_{r}]$','interpreter','latex','fontsize',15)
+title(['$V_{0} = ' num2str(v_0) ' E_{r}$'],'interpreter','latex','fontsize',15)
 
 disp('now finding the tunneling matrix element')
 band_max = max(eigs(1,:))
