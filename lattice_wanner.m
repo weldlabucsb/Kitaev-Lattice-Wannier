@@ -21,10 +21,9 @@ disp('%%%%%%%%%%%%%%%Computing Lattice Parameters%%%%%%%%%%%%%%%')
 if (0)
     disp('%%%%%%%%%%%%%%%%%% Manual Lattice Parameter Override %%%%%%%%%%%%')
     %Since these are made negative later
-    waveAmplitudes = [-1/2,-1/2];
+    waveAmplitudes = [0.5,0.5];
     deltaKsUnitless = [1 1;1 -1];
     deltaPhis = [0 0];
-    maxAmp = 2;
     [X,Y] = meshgrid(0:0.1:2,0:0.1:2);
     totalFromCompSum = zeros(size(X));
     for ii = 1:length(waveAmplitudes)
@@ -34,8 +33,8 @@ if (0)
         totalFromCompSum = totalFromCompSum + compWaveMatrix;
     end
     maxAmp = max(max(totalFromCompSum))-min(min(totalFromCompSum));
-    figure
-    surf(X,Y,totalFromCompSum);
+%     figure
+%     surf(X,Y,totalFromCompSum);
 end
 toc
 disp("%%%%%%%%%%%%%%% Constructing Hamiltonian %%%%%%%%%%%%%%%")
@@ -47,14 +46,12 @@ tic
 %should be rescaling the basis vectors when I rotate the axes by 45
 %degrees. However, right now the round function is actually taking care of
 %that. But, for other lattice configurations this could be broken. A note
-%for fixing later... (I made this note around 9/10/2020
+%for fixing later... (I made this note around 9/10/2020)
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 22; %in Er!!
+potentialDepth = 12; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
-%% Find the Complex Exponential Coefficients
-%Effectively I just want the coefficients of the complex fourier series
-
-%BIG varible here. This is the size of the plane wave basis. I.E. the
+%% Find Fourier Coefficients
+%Size of the plane wave basis. I.E. the
 %fourier coefficients will be included up to +- max_m. This means that the
 %matrix size along one dimension will be 2*max_m + 1
 max_m = 5;
@@ -76,20 +73,12 @@ end
 Vcoeff = -Vcoeff;
 
 %% Plot the Potential (Optional, mainly for troubleshooting...)
-realspace_points = 100;
-xrange = linspace(-2,2,realspace_points);
-yrange = linspace(-2,2,realspace_points);
-[X,Y] = meshgrid(xrange,yrange);
-plot_realspace = fourierbasis_to_realspace(Vcoeff,max_m,X,Y);
 figure
-fontsize = 20;
-contourf(X,Y,real(plot_realspace),10);
-xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-title('Lattice Potential');
-% zlab = ['Lattice Potential'];
-% zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-
+tic
+trans_pott = fourier_to_real_fft(Vcoeff,max_m,50);
+toc
+contourf(repmat(trans_pott,5,5),10);
+% surf(trans_pott)
 % keyboard;
 %% Create Hamiltonian
 %now this is where things start to get different from the other code, given
@@ -101,6 +90,8 @@ max_qm = floor(L/2); %to make sure that we are always in the first BZ
 qsize = 2*max_qm + 1;
 zone_number = 1; %how many zones to plot (for extended zone picture)
 [quasiX,quasiY] = meshgrid((-max_qm:max_qm)./L,(-max_qm:max_qm)./L);
+quasiX = quasiX.';
+quasiY = quasiY.';
 %hammy is the hamiltonian. Needs to accommodate all of the information in
 %components but in 2-d
 hammy = zeros(mLength^2,mLength^2,qsize,qsize);
@@ -179,17 +170,13 @@ end
 %great! now we have a more interpretable to get the information that we
 %need
 %% Construct band projected position operators the analytic way...
-
-
 toc 
 disp("%%%%%%%%%%%% Construct Band-Projected Position Operators %%%%%%%%%%%%%%%%")
 tic
 
 m0 = ceil((L-1)./2)+0.5;
 
-
 %note try to think about bsxfun here...
-%the more I think about it this could be a fun thing to do
 R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 parfor oo = 1:numel(R1)
@@ -220,9 +207,9 @@ V2 = V2(:,indices);
 %value of the real space x operator, but rather the inices of the latice
 %unit cell. In this case, I want to take the one in the center as well as
 %the one next to it so that I can compute tunelling element between them
-x_positions = [ceil(L/2) (ceil(L/2)+1) (ceil(L/2)+2)];
+x_positions = [ceil(L/2) (ceil(L/2)+1)];
 %and the same story for the y positions
-y_positions = [ceil(L/2) (ceil(L/2)+1) (ceil(L/2)+2)];
+y_positions = [ceil(L/2) (ceil(L/2)+1)];
 %which wannier funcs do we want? For this lattice we have two, and you
 %could choose either one. Make sure that they are valid indices
 sub_unit_funcs = [1 2]; 
@@ -252,68 +239,12 @@ for ii = 1:length(x_positions)
     end
 end
 
-%note that we are here now. Now it's time to update the rest of the code to
-%make sure that it is compatible with this new architecture
+%partially localized states
+% x_pos_index = 1;
+% sub_index = 1;
+% wannier_func_index = 1;
+% wannier_func_realspace = bloch_to_real_fft(grouped_eigenvecs(:,sub_index,x_pos_index,wannier_func_index),U,qsize,bands);
 
-
-%% Plot Partially Localized Functions
-toc
-disp('%%%%%%%%%%%%%%%%%%Plotting First Diagonalized States%%%%%%%%%%%%%%%%')
-tic
-%now to plot the partially localized functions
-realspace_points = 100;
-xrange = linspace(-2,2,realspace_points);
-yrange = linspace(-2,2,realspace_points);
-[X,Y] = meshgrid(xrange,yrange);
-U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
-
-%plotting individual bloch states (for the Fio/LS presentation)
-if(1)
-    index = 12; 
-    bloch_state = zeros(qsize.^2*length(bands));
-    bloch_state(index) = 1;
-    bloch_state_realspace = zeros(realspace_points,realspace_points);
-    bloch_state_realspace = blochbasis_to_realspace(bloch_state,U,qsize,bands);
-    fontsize = 26;
-    figure
-    surf(X,Y,abs(bloch_state_realspace));
-%     xlim([-2,2])
-%     ylim([-2,2])
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Re(Wannier Func)'];
-    title('Bloch Eigenstate','interpreter','latex','fontsize',fontsize);
-%     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-end
-
-if(1)
-    x_pos_index = 1;
-    sub_index = 1;
-    wannier_func_index = 1;
-    wannier_func_realspace = zeros(realspace_points,realspace_points);
-    wannier_func_realspace = blochbasis_to_realspace(grouped_eigenvecs(:,sub_index,x_pos_index,wannier_func_index),U,qsize,bands);
-    fontsize = 26;
-    figure
-    surf(X,Y,real(wannier_func_realspace));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Re(Wannier Func)'];
-    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-    figure
-    surf(X,Y,imag(wannier_func_realspace));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Im(Wannier Func)'];
-    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-    figure
-    surf(X,Y,abs(wannier_func_realspace),'edgecolor','interp');
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    title('Partially Localized','interpreter','latex','fontsize',fontsize);
-    zlab = ['Abs(Wannier Func)'];
-%     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-
-end
 
 %% Construct and Diagonalize Other Position Operator
 toc
@@ -322,9 +253,6 @@ tic
 %Now we need to re-evaluate our basis and construct the other position
 %operator in the new basis of the semi-degenerate subspace that we just
 %created....
-
-%now we need to take into account the multiple positions that we wanted to
-%calcuate from the inputs above
 
 %note that the following can be vectorized! Just matrix multiply
 %note that matlab does not allow for higher dimensional matrix
@@ -339,7 +267,6 @@ for ii = 1:length(x_positions)
     end
 end
 
-%things are ok up to here 8/31
 wannier_states_in_bloch_basis = zeros(length(D2),length(x_positions),length(y_positions),length(sub_unit_funcs));
 wannier_states_positions = zeros(1,length(x_positions),length(y_positions),length(sub_unit_funcs));
 %now go through and for each x position and sub_unit_func index, calculate
@@ -360,8 +287,6 @@ for ii = 1:length(x_positions)
     end
 end
 
-%now here at 9/1
-%now we can find the real space representations, if we want to 
 %% Generate Real-Space Plots
 toc
 disp("%%%%%%%%%%%%%%%Generate Real Space Plots%%%%%%%%%%%%%%%%")
@@ -371,36 +296,27 @@ tic
 x_pos_index = 1;
 y_pos_index = 1;
 wannier_func_index = 1;
-wannier_func_realspace = zeros(realspace_points,realspace_points);
-wannier_func_realspace = blochbasis_to_realspace(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),U,qsize,bands);
-
-
-%here is where I was quickly trying to get the sub-localized plots for the
-%presentation. Ended up not having time...
-% partially_diag = zeros(realspace_points,realspace_points,3);
-% for ii = 1:3
-%    partially_diag(:,:,ii) = blochbasis_to_realspace(grouped_eigvecs(:,ii,x_pos_index,wannier_func_index));
-% end
+wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,0);
 
     
 if (1)
     %Then just take away the imaginary part:
-    wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(3,3))).*(-1);
+    wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);
     fontsize = 26;
     figure
-    surf(X,Y,real(wannier_func_realspace));
+    surf(real(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     zlab = ['Re(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
-    surf(X,Y,imag(wannier_func_realspace));
+    surf(imag(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     zlab = ['Im(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
-    surf(X,Y,abs(wannier_func_realspace),'edgecolor','interp');
+    surf(abs(wannier_func_realspace),'edgecolor','interp');
 %     surf(X,Y,abs(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
@@ -408,7 +324,7 @@ if (1)
     title('Wannier Func 1','interpreter','latex','fontsize',fontsize);
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
-    surf(X,Y,angle(wannier_func_realspace));
+    surf(angle(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex');
     zlab = ['Arg(Wannier Func)'];
@@ -433,7 +349,10 @@ for ii = bands
 end
 sub_space_hamiltonian(:,:) = diag(reshape(vectorized_eigvals,(qsize.^2)*length(bands),1));
 
-
+for ii = 1:length(x_positions)
+    wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,0);
+    wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index) = wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index).*exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);
+end
 %calculate the J matrix element with the inner product of the hamiltonian
 %and the wannier states in the bloch basis...
 %in this case let's just calculate going one across in the x direction for

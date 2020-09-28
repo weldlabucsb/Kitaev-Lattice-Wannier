@@ -77,8 +77,8 @@ Vcoeff = -Vcoeff;
 
 %% Plot the Potential (Optional, mainly for troubleshooting...)
 realspace_points = 100;
-xrange = linspace(-2,2,realspace_points);
-yrange = linspace(-2,2,realspace_points);
+xrange = linspace(-1,1,realspace_points);
+yrange = linspace(-1,1,realspace_points);
 [X,Y] = meshgrid(xrange,yrange);
 disp('Now using fourier exponentials')
 tic
@@ -104,6 +104,7 @@ tic
 trans_pott = fourier_to_real_fft(Vcoeff,max_m,50);
 toc
 contourf(trans_pott,10);
+% keyboard;
 % keyboard;
 % zlab = ['Lattice Potential'];
 % zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
@@ -213,14 +214,19 @@ m0 = ceil((L-1)./2)+0.5;
 %the more I think about it this could be a fun thing to do
 R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+updateWaitbar = waitbarParfor(numel(R1),"Constructing Position Operators");
+% ppm = ParforProgressbar(numel(R1), 'progressBarUpdatePeriod', 1.5);
 parfor oo = 1:numel(R1)
     [row,col] = ind2sub([qsize.^2*length(bands),qsize.^2*length(bands)],oo);
+    updateWaitbar();
+%     ppm.increment();
     if (row >= col)
         [qy1,qx1,band1] = ind2sub([qsize,qsize,length(bands)],row);
         [qy2,qx2,band2] = ind2sub([qsize,qsize,length(bands)],col);
         [R1(oo),R2(oo)] = comp_elem(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
     end
 end
+% delete(ppm);
 R1 = R1 + (R1-diag(diag(R1)))';
 R2 = R2 + (R2-diag(diag(R2)))';
 
@@ -282,14 +288,17 @@ toc
 disp('%%%%%%%%%%%%%%%%%%Plotting First Diagonalized States%%%%%%%%%%%%%%%%')
 tic
 %now to plot the partially localized functions
-realspace_points = 100;
-xrange = linspace(-L/2,L/2,realspace_points);
-yrange = linspace(-L/2,L/2,realspace_points);
-[X,Y] = meshgrid(xrange,yrange);
-U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
+
 
 %plotting individual bloch states (for the Fio/LS presentation)
-if(1)
+if(0)
+    disp('Computing Directly')
+    tic
+    realspace_points = 100;
+    xrange = linspace(-L/2,L/2,realspace_points);
+    yrange = linspace(-L/2,L/2,realspace_points);
+    [X,Y] = meshgrid(xrange,yrange);
+    U = bloch_wave(eigvecs,max_m,X,Y,quasiX,quasiY,bands);
     index = 12; 
     bloch_state = zeros(qsize.^2*length(bands));
     bloch_state(index) = 1;
@@ -304,14 +313,17 @@ if(1)
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     zlab = ['Re(Wannier Func)'];
     title('Bloch Eigenstate Using the U Method','interpreter','latex','fontsize',fontsize);
+    toc
 %     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-
+    disp('computing with FFT')
+    tic
     bloch_state_realspace = bloch_to_real_fft(bloch_state,weightsMatrix,max_m,L,bands);
     figure
     surf(imag(bloch_state_realspace));
     title('Bloch Eigenstate with FFT');
     xlabel('x')
     ylabel('y')
+    toc
 end
 
 if(0)
@@ -399,11 +411,11 @@ tic
 x_pos_index = 1;
 y_pos_index = 1;
 wannier_func_index = 1;
-wannier_func_realspace = zeros(realspace_points,realspace_points);
-wannier_func_realspace = blochbasis_to_realspace(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),U,qsize,bands);
+% wannier_func_realspace = zeros(realspace_points,realspace_points);
+% wannier_func_realspace = blochbasis_to_realspace(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),U,qsize,bands);
 
 %here trying with the new FFT version:
-wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands);
+wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,1);
 
 %here is where I was quickly trying to get the sub-localized plots for the
 %presentation. Ended up not having time...
@@ -415,7 +427,7 @@ wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,x_pos
     
 if (1)
     %Then just take away the imaginary part:
-    wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(3,3))).*(-1);
+    wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(53,56))).*(-1);
     fontsize = 26;
     figure
 %     surf(X,Y,real(wannier_func_realspace));

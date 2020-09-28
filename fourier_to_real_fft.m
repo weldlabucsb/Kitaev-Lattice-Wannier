@@ -7,6 +7,6 @@ function [U] = fourier_to_real_fft(weights,max_m,ext_m)
 %This is to make the output plot smoother without changing the actual plot.
 U = zeros(2*ext_m+1,2*ext_m+1);
 U(ext_m-max_m+1:ext_m+max_m+1,ext_m-max_m+1:ext_m+max_m+1) = weights;
-U = ifft2(ifftshift(U.'));
+U = fftshift(ifft2(ifftshift(U.')));
 U = U.*(length(U)^2);
 end

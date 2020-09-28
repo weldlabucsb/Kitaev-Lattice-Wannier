@@ -1,4 +1,4 @@
-function [real_space] = bloch_to_real_fft(psi,weights_matrix,max_m,L,bands)
+function [real_space] = bloch_to_real_fft(psi,weights_matrix,max_m,L,bands,sym)
 %using the tensor product method, go from the bloch basis to realspace.
 %This will require the set of bloch functions and the associated
 %quasimomentum mesh. 
@@ -14,6 +14,10 @@ for kk = bands
         end
     end
 end
-real_space = fftshift(ifft2(ifftshift(fourier_comps.')));
+if(sym)
+    real_space = fftshift(ifft2(ifftshift(fourier_comps.'),'symmetric'));
+else
+    real_space = fftshift(ifft2(ifftshift(fourier_comps.')));
+end
 real_space = real_space.*(length(real_space).^2);
 end
