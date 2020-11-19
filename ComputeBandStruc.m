@@ -33,7 +33,7 @@ plots = 1; %boolean to turn plots on or off
 
 [waveAmplitudes,deltaKsUnitless,deltaPhis,maxAmp]=GeneralLatticeComplexRepWithComponents(A,ph_deg,th_deg,pol_deg,plots);
 %square lattice params
-if (0)
+if (1)
     waveAmplitudes = [1,1];
     deltaKsUnitless = [1 0;0 1];
     deltaPhis = [0 0];
@@ -131,7 +131,7 @@ for ii = 1:qsize
 end
 toc
 %% Plot the band structure
-keyboard;
+% keyboard;
 % fig1 = figure;
 figure;
 hold all;
@@ -145,6 +145,7 @@ for kk = 1:num_bands
     zlabel(zlab, 'interpreter','latex');
 end
 
+keyboard
 % keyboard
 %% Plot the bloch functions
 %The bloch functions are themselves a function of the quasimomentum, so

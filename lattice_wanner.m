@@ -43,7 +43,7 @@ tic
 %be rounded to integers. They pretty much already are to MATLAB precision
 
 %NOTE, there is a bit of weirdness going on here in the sense that really I
-%should be rescaling the basis vectors when I rotate the axes by 45
+%should be rescaling the basis vectors when I rotate the axes by 45 
 %degrees. However, right now the round function is actually taking care of
 %that. But, for other lattice configurations this could be broken. A note
 %for fixing later... (I made this note around 9/10/2020)
@@ -179,6 +179,7 @@ m0 = ceil((L-1)./2)+0.5;
 %note try to think about bsxfun here...
 R1 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
 R2 = zeros(qsize.^2*length(bands),qsize.^2*length(bands));
+% ppm = ParforProgressbar(numel(R1), 'progressBarUpdatePeriod', 1.5);
 parfor oo = 1:numel(R1)
     [row,col] = ind2sub([qsize.^2*length(bands),qsize.^2*length(bands)],oo);
     if (row >= col)
@@ -186,7 +187,9 @@ parfor oo = 1:numel(R1)
         [qy2,qx2,band2] = ind2sub([qsize,qsize,length(bands)],col);
         [R1(oo),R2(oo)] = comp_elem(weightsMatrix,L,max_m,max_qm,band1,band2,qx1,qx2,qy1,qy2);
     end
+%     ppm.increment();
 end
+% delete(ppm);
 R1 = R1 + (R1-diag(diag(R1)))';
 R2 = R2 + (R2-diag(diag(R2)))';
 
@@ -349,6 +352,8 @@ for ii = bands
 end
 sub_space_hamiltonian(:,:) = diag(reshape(vectorized_eigvals,(qsize.^2)*length(bands),1));
 
+
+%remove (as much as possible) the imaginary phase)
 for ii = 1:length(x_positions)
     wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,0);
     wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index) = wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index).*exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);

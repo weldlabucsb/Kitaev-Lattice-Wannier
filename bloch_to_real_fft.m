@@ -5,7 +5,7 @@ function [real_space] = bloch_to_real_fft(psi,weights_matrix,max_m,L,bands,sym)
 fourier_comps = zeros((2*max_m+1)*L);
 %potentially bsxfun could be good here.
 %https://www.mathworks.com/matlabcentral/answers/104127-how-to-multiply-multidimensional-arrays-with-a-column-vector
-for kk = bands
+for kk = 1:length(bands)
     for ll = 1:L
         for mm = 1:L
             quasiMatrix = zeros(L);
