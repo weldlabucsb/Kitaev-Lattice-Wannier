@@ -22,12 +22,27 @@ function [waveAmplitudes,deltaKsUnitless,deltaPhis,potentialDepth]=GeneralLattic
 %             th_deg = [0,90,180,270];
 %             pol_deg = [0,0,0,0];
 %             
-            %regular lattice
+            %duck lattice
             A = [1,1,0.6,0.5];
             ph_deg = [0, 0, 90, -70];
             th_deg = [0,90,180,270];
             pol_deg = [0,0,0,0];
             plots = 1; %boolean to turn plots on or off
+            
+            %square lattice
+            A=[1,1,1,1];
+            ph_deg = [0,0,0,0];
+            th_deg = [0,90,180,270];
+            pol_deg = [0,0,0,0];
+            plots = 1;
+            
+            
+            %1d lattice
+%             A=[1,1];
+%             ph_deg=[0,0];
+%             th_deg = [0,180];
+%             pol_deg = [0,0];
+%             plots = 1;
     end
         
     close all

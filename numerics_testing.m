@@ -1,15 +1,19 @@
-function [] =  numerics_testing()
+function [J] =  numerics_testing(potentialDepth)
 %% generate the lattice potential
 %using the 6 cosine components of the lattice potential generated as output
 %from Peter's code.
-clear all;
-A = [1,1,0.6,0.5];
-ph_deg = [0, 0, 90, -70];
-th_deg = [0,90,180,270];
-pol_deg = [0,0,0,0];
+% clear all;
+if (nargin < 1)
 
-plots = 0; %boolean to turn plots on or off
+    potentialDepth = 12; %in Er
+end
 
+    A = [1,1,0.6,0.5];
+    ph_deg = [0, 0, 90, -70];
+    th_deg = [0,90,180,270];
+    pol_deg = [0,0,0,0];
+
+    plots = 0; %boolean to turn plots on or off
 
 %%%%%%%%%%%%% basis rotation %%%%%%%%%%%
 th_deg = th_deg-45;
@@ -49,7 +53,6 @@ tic
 %that. But, for other lattice configurations this could be broken. A note
 %for fixing later... (I made this note around 9/10/2020)
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 22; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find Fourier Coefficients
 %Size of the plane wave basis. I.E. the
@@ -118,43 +121,26 @@ for ii = 1:mLength
 end
 
 num_bands = 4;
-eigvals = zeros(num_bands,num_bands,qsize,qsize);
-eigvecs = zeros((mLength^2),num_bands,qsize,qsize);
+eigvals = zeros(mLength^2,mLength^2,qsize,qsize);
+eigvecs = zeros(mLength^2,mLength^2,qsize,qsize);
 toc
 disp("%%%%%%%%%%%%Diagonalizing Hamiltonian %%%%%%%%%%%%%%%")
 tic
 for ii = 1:qsize
     for jj = 1:qsize
         %diagonalize for each point in the BZ
-        [eigvecs(:,:,ii,jj),eigvals(:,:,ii,jj)] = eigs(hammy(:,:,ii,jj),num_bands,'smallestreal');
+        [eigvecs(:,:,ii,jj),eigvals(:,:,ii,jj)] = eig(hammy(:,:,ii,jj));
     end
 end
 clear hammy;
-
-%% Plot the band structure
-toc
-if (0)
-    disp("%%%%%%%%%%%%%%% Plotting Band Structure %%%%%%%%%%%%%%%%")
-    tic
-    % fig1 = figure;
-    figure;
-    hold all;
-
-
-    for kk = 1:num_bands
-        surf(quasiX,quasiY,reshape(eigvals(kk,kk,:,:),qsize,qsize),'edgecolor','interp');
-        xlabel('x quasimomentum, [$k_l$]','interpreter','latex');
-        ylabel('y quasimomentum, [$k_l$]','interpreter','latex');
-        zlab = ['Energy, [$E_R$]; lattice depth = ' num2str(potentialDepth) ' [$E_R$]'];
-        zlabel(zlab, 'interpreter','latex');
-    end
-
-    toc
-end
+eigvecs = eigvecs(:,1:num_bands,:,:);
+eigvals = eigvals(1:num_bands,1:num_bands,:,:);
+% keyboard;
 %% De-compactify the eigenvectors:
 %bands to be caluclated. Really there are only 2 non-trivial sublattice
 %minima
 bands = [1];
+toc
 disp("%%%%%%%%%%%%%%% De-Compactify Eigenvectors %%%%%%%%%%%%%%%%")
 tic
 %this is the eigenvector output from the eig function. Remember that we
@@ -168,6 +154,7 @@ for kk = 1:length(bands)
         end
     end
 end
+clear eigvecs;
 %great! now we have a more interpretable to get the information that we
 %need
 %% Construct band projected position operators the analytic way...
@@ -258,7 +245,7 @@ for ii = 1:length(x_positions)
         degen_operator(:,:,ii,jj) = (grouped_eigenvecs(:,:,ii,jj)')*R1*(grouped_eigenvecs(:,:,ii,jj));
     end
 end
-keyboard;
+
 wannier_states_in_bloch_basis = zeros(qsize.^2*length(bands),length(x_positions),length(y_positions),length(sub_unit_funcs));
 wannier_states_positions = zeros(1,length(x_positions),length(y_positions),length(sub_unit_funcs));
 %now go through and for each x position and sub_unit_func index, calculate
@@ -327,6 +314,7 @@ end
 %% Calculate Bose Hubbard Parameters
 toc
 disp('%%%%%%%%%%%%%%%% Calculate Bose Hubbard Parameters %%%%%%%%%%%%%%%%%%%')
+tic
 %note that now we need to re-construct the hamiltonian in the sub-space of
 %the bloch states that we are trying to consider. Since we already found
 %the eigenbasis of the hamiltonian, this is just a question of construcing
@@ -340,20 +328,19 @@ vectorized_eigvals = zeros(qsize.^2,length(bands));
 for ii = 1:length(bands)
    vectorized_eigvals(:,ii) = reshape(eigvals(bands(ii),bands(ii),:,:),qsize.^2,1);
 end
-% keyboard;
 sub_space_hamiltonian(:,:) = diag(reshape(vectorized_eigvals,(qsize.^2)*length(bands),1));
-keyboard;
+
 
 %remove (as much as possible) the imaginary phase)
 for ii = 1:length(x_positions)
     wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,0);
     wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index) = wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index).*exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);
 end
-keyboard;
+
 %calculate the J matrix element with the inner product of the hamiltonian
 %and the wannier states in the bloch basis...
 %in this case let's just calculate going one across in the x direction for
 %the first wannier state
-J = (wannier_states_in_bloch_basis(:,1,1,1)')*sub_space_hamiltonian*wannier_states_in_bloch_basis(:,2,1,1)
+J = (wannier_states_in_bloch_basis(:,1,1,1)')*sub_space_hamiltonian*wannier_states_in_bloch_basis(:,2,1,1);
 
 end
