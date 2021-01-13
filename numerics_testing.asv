@@ -249,17 +249,11 @@ toc
 disp("%%%%%%%%%%%%%%%%%%%%%%Re-Phase the Bloch states %%%%%%%%%%%%%%%%%%%")
 tic
 %here x_pos_ind and y_pos_ind are the wannier func in the center. 
-% x_pos_index = 1;
-% y_pos_index = 1;
-% wannier_func_index = 1;
-% 
-% for alpha = 1:length(bands)
-%     for qx = 1:qsize
-%         for qy = 1:qsize
-%             
-%         end
-%     end
-% end
+x_pos_index = 1;
+y_pos_index = 1;
+wannier_func_index = 1;
+
+for alpha = 1:
 
 
 

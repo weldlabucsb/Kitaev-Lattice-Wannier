@@ -1,7 +1,7 @@
 %this is the meta code for running multiple iterations of the
 %numerics_testing(and then eventually the lattice wannier code) to produce
 %J plots vs the depth of the lattice 
-n = 60;
+n = 10;
 depths = linspace(1,30,n);
 Js = zeros(n,1);
 
