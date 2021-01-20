@@ -6,8 +6,11 @@ fourier_comps = zeros((2*max_m+1)*L);
 %potentially bsxfun could be good here.
 %https://www.mathworks.com/matlabcentral/answers/104127-how-to-multiply-multidimensional-arrays-with-a-column-vector
 for kk = 1:length(bands)
-    for ll = 1:L
-        for mm = 1:L
+    for ll = 1:L %quasimomentumx
+        for mm = 1:L %quasimomentumy
+            %here find the state in the fourier basis of the real space
+            %lattice (since the fourier transform is linear, we can add the
+            %vector before transforming it
             quasiMatrix = zeros(L);
             quasiMatrix(ll,mm) = 1;
             fourier_comps = fourier_comps + psi((kk-1)*(L)^2 + (ll-1)*L + mm).*kron(weights_matrix(:,:,kk,ll,mm),quasiMatrix);
