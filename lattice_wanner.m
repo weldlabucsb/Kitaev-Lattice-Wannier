@@ -48,7 +48,7 @@ tic
 %that. But, for other lattice configurations this could be broken. A note
 %for fixing later... (I made this note around 9/10/2020)
 deltaKsUnitless = round(deltaKsUnitless);
-potentialDepth = 12; %in Er!!
+potentialDepth = 30; %in Er!!
 waveAmplitudes = waveAmplitudes.*(potentialDepth./maxAmp);
 %% Find Fourier Coefficients
 %Size of the plane wave basis. I.E. the
@@ -307,9 +307,10 @@ if (1)
     wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);
     fontsize = 26;
     figure
-    surf(real(wannier_func_realspace));
+    surf(-1.*real(wannier_func_realspace),'edgealpha',0.6);
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
+    title(['MLWF, $V_0 = $' num2str(potentialDepth) '$E_{R}$' ],'interpreter','latex','fontsize',fontsize);
     zlab = ['Re(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
@@ -319,7 +320,7 @@ if (1)
     zlab = ['Im(Wannier Func)'];
     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
     figure
-    surf(abs(wannier_func_realspace),'edgecolor','interp');
+    surf(abs(wannier_func_realspace),'edgealpha',0.3);
 %     surf(X,Y,abs(wannier_func_realspace));
     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);

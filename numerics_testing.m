@@ -1,8 +1,9 @@
-function [J] =  numerics_testing(potentialDepth)
+function [J,U] =  numerics_testing(potentialDepth)
 %% generate the lattice potential
 %using the 6 cosine components of the lattice potential generated as output
 %from Peter's code.
 % clear all;
+close all;
 if (nargin < 1)
 
     potentialDepth = 10; %in Er
@@ -274,93 +275,36 @@ for alpha = 1:length(bands)
     end
 end
 
+% magnitudes_of_earlier_wannier =zeros(qsize.^2*length(bands),length(x_positions),length(y_positions),length(sub_unit_funcs));
+% for xind = 1:length(x_positions)
+%     for yind = 1:length(y_positions)
+%         for subind = 1:length(sub_unit_funcs)
+%             magnitudes_of_earlier_wannier(:,xind,yind,subind) = norm(wannier_states_in_bloch_basis(:,xind,yind,subind));
+%         end
+%     end
+% end
+%now that this is done, we can create invariable wannier functions anywhere
+%we want on the lattice!
+wannier_states_in_bloch_basis = construct_wannier_funcs(x_positions,y_positions,bands,sub_unit_funcs,qsize,A,G,quasiX,quasiY,L);
 
+trying_change_mag = 0;
+if (trying_change_mag)
+    wannier_states_in_bloch_basis = wannier_states_in_bloch_basis.*magnitudes_of_earlier_wannier;
+end
 %%Generate Invariable Real-Space Plots
 toc
 disp("%%%%%%%%%%%%%%%%%%%%%%Generate Real Space Plots%%%%%%%%%%%%%%%%%%%")
 tic
-x_pos_index = 1;
-y_pos_index = 2;
-wannier_blochspace_dft = zeros(qsize.^2*length(bands),1);
-wannier_realspace_dft = zeros((2*max_m+1)*L);
+
 %now let's try to generate using the canonical definition with states with
 %fixed phases.
-for alpha = 1:length(bands)
-    for qx = 1:qsize
-        for qy = 1:qsize
-            k_dot_R = dot((x_positions(x_pos_index).*A(:,1) + y_positions(y_pos_index).*A(:,2)),...
-                quasiX(qx,qy)*G(:,1)+quasiY(qx,qy)*G(:,2));
-            wannier_blochspace_dft((alpha-1)*(L)^2 + (qx-1)*L + qy) = exp(-1i*k_dot_R);
-        end
-    end
+
+
+
+if(0)
+    wannier_plots(wannier_realspace_dft);
 end
-wannier_blochspace_dft = wannier_blochspace_dft./norm(wannier_blochspace_dft);
-wannier_realspace_dft = bloch_to_real_fft(wannier_blochspace_dft,weightsMatrix,max_m,L,bands,0);
 
-%% Generate Real-Space Plots
-toc
-disp("%%%%%%%%%%%%%%%Generate Real Space Plots%%%%%%%%%%%%%%%%")
-tic
-
-
-% x_pos_index = 1;
-% y_pos_index = 1;
-% wannier_func_index = 1;
-% wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,0);
-
-% keyboard;
-% wannier_states_in_bloch_basis(:,x_pos_index,y_pos_index,wannier_func_index)
-
-
-
-    
-if (1)
-    %Then just take away the imaginary part:
-    wannier_func_realspace = wannier_func_realspace .* exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);
-    fontsize = 26;
-    figure
-    surf(real(wannier_func_realspace));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Re(Wannier Func)'];
-    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-    figure
-    surf(imag(wannier_func_realspace));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Im(Wannier Func)'];
-    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-    
-    fontsize = 26;
-    figure
-    surf(real(wannier_realspace_dft));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Re(Wannier Func) from dft'];
-    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-    figure
-    surf(imag(wannier_realspace_dft));
-    xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-    zlab = ['Im(Wannier Func) from dft'];
-    zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-%     figure
-%     surf(abs(wannier_func_realspace));
-%     set(gca,'zscale','log');
-% %     surf(X,Y,abs(wannier_func_realspace));
-%     xlabel('X Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-%     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex','fontsize',fontsize);
-%     zlab = ['Abs(Wannier)'];
-%     title('Wannier Func 1','interpreter','latex','fontsize',fontsize);
-%     zlabel(zlab, 'interpreter','latex','fontsize',fontsize);
-%     figure
-%     surf(angle(wannier_func_realspace));
-%     xlabel('X Pos., [$\lambda_l$]','interpreter','latex');
-%     ylabel('Y Pos., [$\lambda_l$]','interpreter','latex');
-%     zlab = ['Arg(Wannier Func)'];
-%     zlabel(zlab, 'interpreter','latex');
-end
-keyboard;
 %% Calculate Bose Hubbard Parameters
 toc
 disp('%%%%%%%%%%%%%%%% Calculate Bose Hubbard Parameters %%%%%%%%%%%%%%%%%%%')
@@ -381,11 +325,7 @@ end
 sub_space_hamiltonian(:,:) = diag(reshape(vectorized_eigvals,(qsize.^2)*length(bands),1));
 
 
-%remove (as much as possible) the imaginary phase)
-for ii = 1:length(x_positions)
-    wannier_func_realspace = bloch_to_real_fft(wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index),weightsMatrix,max_m,L,bands,0);
-    wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index) = wannier_states_in_bloch_basis(:,ii,y_pos_index,wannier_func_index).*exp(-1i*angle(wannier_func_realspace(53,55))).*(-1);
-end
+
 
 %calculate the J matrix element with the inner product of the hamiltonian
 %and the wannier states in the bloch basis...
@@ -393,4 +333,8 @@ end
 %the first wannier state
 J = (wannier_states_in_bloch_basis(:,1,1,1)')*sub_space_hamiltonian*wannier_states_in_bloch_basis(:,2,1,1);
 
+[wannier_realspace_dft,X,Y] = plotting_bloch(wannier_states_in_bloch_basis(:,1,1,1),weightsMatrix,max_m,L,bands,1,A);
+x = X(1,:);
+y = Y(:,1);
+U = trapz(y,trapz(x,abs(wannier_realspace_dft).^4,2));
 end
